@@ -6,9 +6,11 @@
       "dom.iterable",
       "esnext"
     ],
-    "baseUrl": ".",
+    "noEmit": false,    // Ensure this is false
+    "outDir": "./dist",
+    "baseUrl": "./src",
     "paths": {
-      "src/*": ["./src/*"]
+      "src/*": ["*"]
     },
     "allowJs": true,
     "skipLibCheck": true,
@@ -21,11 +23,10 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
     "jsx": "react-jsx",
     "typeRoots": ["node_modules/@types", "./types"],
     "types": ["node", "body-parser", "express", "http-errors", "graceful-fs", "http-proxy", "range-parser", "resolve", "send", "serve-index", "serve-static", "trusted-types"]
   },
   "exclude": ["node_modules", "build"],
-  "include": ["src"]
+  "include": ["src/**/*"]  // Make sure this includes your src files
 }
