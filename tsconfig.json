@@ -1,11 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
+    "baseUrl": ".",
+    "paths": {
+      "src/*": ["./src/*"]
+    },
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -18,9 +22,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "typeRoots": ["node_modules/@types", "./types"],
+    "types": ["node", "body-parser", "express", "http-errors", "graceful-fs", "http-proxy", "range-parser", "resolve", "send", "serve-index", "serve-static", "trusted-types"]
   },
-  "include": [
-    "src"
-  ]
+  "exclude": ["node_modules", "build"],
+  "include": ["src"]
 }

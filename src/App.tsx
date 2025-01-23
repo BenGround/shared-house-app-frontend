@@ -1,25 +1,26 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter } from 'react-router-dom';
+import { Router } from './routes/sections';
+import { UserProvider } from './contexts/userContext';
+import { ThemeProvider } from 'src/theme/theme-provider';
+import { HelmetProvider } from 'react-helmet-async';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ShareSpacesProvider } from './contexts/shareSpacesContext';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <HelmetProvider>
+      <ThemeProvider>
+        <UserProvider>
+          <ShareSpacesProvider>
+            <ToastContainer position="bottom-right" />
+            <BrowserRouter>
+              <Router />
+            </BrowserRouter>
+          </ShareSpacesProvider>
+        </UserProvider>
+      </ThemeProvider>
+    </HelmetProvider>
   );
 }
 
