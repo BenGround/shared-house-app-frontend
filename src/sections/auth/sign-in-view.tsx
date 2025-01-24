@@ -10,17 +10,23 @@ import { useRouter } from 'src/routes/hooks';
 import { Iconify } from 'src/components/iconify';
 import { useUser } from 'src/contexts/userContext';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 
 const SignIn: React.FC = () => {
   return <SignInView />;
 };
 
 export function SignInView() {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const roomNumberFromQueryParams = queryParams.get('roomNumber');
   const { t } = useTranslation();
   const router = useRouter();
   const { login, isAuthenticated } = useUser();
 
-  const [roomNumber, setRoomNumber] = useState<string>('');
+  const [roomNumber, setRoomNumber] = useState<string>(
+    roomNumberFromQueryParams ? roomNumberFromQueryParams : ''
+  );
   const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState(false);
 

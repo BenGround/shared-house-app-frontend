@@ -2,10 +2,10 @@
 	"room.number": "Room Number",
 	"password": "Password",
 	"errors.unknow": "An error occurred",
-	"login-success": "Login successful",
-	"login-fail": "Login failed",
-	"logout-success": "Logout successful",
-	"logout-fail": "Logout failed",
+	"login.success": "Login successful",
+	"login.failed": "Login failed",
+	"logout.success": "Logout successful",
+	"logout.fail": "Logout failed",
 	"session.failed": "Failed to retrieve session, please log in again",
 	"checking.auth": "Checking authentication...",
 	"404.page.not.found": "Sorry, page not found!",
@@ -65,5 +65,10 @@
 	"errors.user.wrong.credentails": "Incorrect username or password",
 	"errors.user.logout": "An error occured while trying to logout",
 	"errors.user.not.found": "User not foud",
-	"errors.forbidden": "Forbidden"
+	"errors.forbidden": "Forbidden",
+	"create.password": "Create password",
+	"confirm.password": "Confirm password",
+	"password.mismatch": "The passwords you entered do not match",
+	"password.created": "The password has been successfully created",
+	"password.create.error": "Error during password creation"
 }

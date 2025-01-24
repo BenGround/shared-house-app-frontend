@@ -17,6 +17,7 @@ export const Page404 = lazy(() => import('../pages/page-not-found'));
 export const BookingCalendar = lazy(
   () => import('../sections/bookings/bookingCalendar')
 );
+export const CreatePassword = lazy(() => import('../pages/create-password'));
 
 const renderFallback = (
   <Box sx={{ textAlign: 'center', marginTop: '25vh' }}>
@@ -69,6 +70,16 @@ export function Router() {
           path: 'user',
         },
       ],
+    },
+    {
+      path: 'create-password',
+      element: isAuthenticated() ? (
+        <Navigate to="/" replace />
+      ) : (
+        <AuthLayout>
+          <CreatePassword />
+        </AuthLayout>
+      ),
     },
     {
       path: 'sign-in',

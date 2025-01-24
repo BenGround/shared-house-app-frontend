@@ -52,7 +52,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
         id: booking.id,
         start: booking.startDate,
         end: booking.endDate,
-        text: booking.username,
+        text: booking.roomNumber,
       }));
       setEvents(newEvents);
     } catch (error: Error | any) {
@@ -185,7 +185,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
         id: response.data.booking.id,
         start: new DayPilot.Date(tokyoStartDate.format()),
         end: new DayPilot.Date(tokyoEndDate.format()),
-        text: user?.username || t('bookings.newBooking'),
+        text: user?.roomNumber || t('bookings.newBooking'),
       };
 
       setEvents((prevEvents) => [...prevEvents, newEvent]);
@@ -323,7 +323,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
               args.data.backColor = '#e6fff2';
               args.data.text = `${args.data.text} - ${t('bookings.ongoing')}`;
             }
-            if (args.data.text !== user?.username) {
+            if (args.data.text !== user?.roomNumber) {
               args.data.barHidden = true;
             }
           }}

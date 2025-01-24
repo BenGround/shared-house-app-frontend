@@ -2,6 +2,7 @@
   "name": "shared-house-app-frontend",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/",
   "dependencies": {
     "@daypilot/daypilot-lite-react": "^3.31.0",
     "@emotion/react": "^11.14.0",
@@ -74,6 +75,7 @@
     "@types/serve-index": "^1.9.4",
     "@types/serve-static": "^1.15.7",
     "@types/trusted-types": "^2.0.7",
+    "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^7.1.2",
     "html-webpack-plugin": "^5.6.3",
     "style-loader": "^4.0.0",

@@ -2,10 +2,10 @@
 	"room.number": "部屋番号",
 	"password": "パスワード",
 	"errors.unknow": "エラーが発生しました",
-	"login-success": "ログイン成功",
-	"login-fail": "ログイン失敗",
-	"logout-success": "ログアウト成功",
-	"logout-fail": "ログアウト失敗",
+	"login.success": "ログイン成功",
+	"login.fail": "ログイン失敗",
+	"logout.success": "ログアウト成功",
+	"logout.fail": "ログアウト失敗",
 	"session.failed": "セッションの取得に失敗しました。再度ログインしてください。",
 	"checking.auth": "認証を確認中...",
 	"404.page.not.found": "ページが見つかりません",
@@ -65,5 +65,6 @@
 	"errors.user.wrong.credentails": "ユーザー名またはパスワードが正しくありません",
 	"errors.user.logout": "ログアウト中にエラーが発生しました",
 	"errors.user.not.found": "ユーザーが見つかりません",
-	"errors.forbidden": "禁止されています"
+	"errors.forbidden": "禁止されています",
+	"password.create.error": "パスワード作成中にエラーが発生しました"
 }
