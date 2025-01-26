@@ -225,7 +225,9 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
           >
             {t(sharedSpace.nameCode)}
           </Typography>
-          <Typography variant="body1">{sharedSpace.description}</Typography>
+          <Typography variant="body2" style={{ textAlign: 'center' }}>
+            {sharedSpace.description}
+          </Typography>
 
           <Typography variant="body1">
             {t('bookings.maxBookingHours', {

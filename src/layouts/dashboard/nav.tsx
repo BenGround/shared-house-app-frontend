@@ -14,12 +14,14 @@ import { varAlpha } from '../../theme/styles';
 import { Scrollbar } from '../../components/scrollbar';
 import { useTranslation } from 'react-i18next';
 import { Divider } from '@mui/material';
+import { useUser } from 'src/contexts/userContext';
 
 export type NavContentProps = {
   data: {
     path: string;
     titleCode: string;
     info?: React.ReactNode;
+    admin?: boolean;
   }[];
 };
 
@@ -83,6 +85,12 @@ export function NavMobile({
 export function NavContent({ data }: NavContentProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
+
+  const { user } = useUser();
+
+  if (!user?.isAdmin) {
+    data.filter((navItem) => !navItem.admin);
+  }
 
   return (
     <>

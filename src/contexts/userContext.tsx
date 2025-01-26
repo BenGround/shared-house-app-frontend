@@ -14,6 +14,7 @@ interface User {
   username: string;
   roomNumber: string;
   email: string;
+  isAdmin: boolean;
 }
 
 interface LoginResponse {
@@ -47,8 +48,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         { withCredentials: true }
       );
       if (response.data.status) {
-        const { username, roomNumber, email } = response.data.user;
-        setUser({ username, roomNumber, email });
+        const { username, roomNumber, email, isAdmin } = response.data.user;
+        setUser({ username, roomNumber, email, isAdmin });
         setIsAuthenticated(true);
         toast.success(t('login.success'));
       } else {

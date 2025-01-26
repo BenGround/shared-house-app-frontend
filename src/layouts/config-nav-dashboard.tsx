@@ -17,5 +17,6 @@ export const navData = [
         +3
       </Label>
     ),
+    admin: true,
   },
 ];
