@@ -16,7 +16,7 @@
 	"users": "Users",
 	"signin": "Sign In",
 	"pagenotfound": "Page Not Found",
-	"welcomeback": "Welcome back, {{name}} 👋",
+	"welcomeback": "Welcome back {{name}} 👋",
 	"account.popover.profile": "Profile",
 	"account.popover.home": "Home",
 	"account.popover.settings": "Settings",
@@ -70,5 +70,12 @@
 	"confirm.password": "Confirm password",
 	"password.mismatch": "The passwords you entered do not match",
 	"password.created": "The password has been successfully created",
-	"password.create.error": "Error during password creation"
+	"password.create.error": "Error during password creation",
+	"logout": "Log out",
+	"select.booking.hours": "Select Booking Hours",
+	"profile": "Profile",
+	"profile.change.picture": "Change profile picture",
+	"profile.save.changes": "Save changes",
+	"email": "Email",
+	"username": "Username"
 }

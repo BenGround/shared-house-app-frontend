@@ -10,11 +10,12 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import axiosInstance from 'src/settings/axiosInstance';
 
-interface User {
-  username: string;
+export interface User {
+  username: string | undefined;
   roomNumber: string;
   email: string;
   isAdmin: boolean;
+  profilePicture: string | undefined;
 }
 
 interface LoginResponse {
@@ -29,6 +30,8 @@ interface UserContextType {
   checkSession: () => Promise<void>;
   login: (roomNumber: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  updateUser: (username: string) => Promise<void>;
+  updateUserPicture: (file: File) => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -48,8 +51,9 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         { withCredentials: true }
       );
       if (response.data.status) {
-        const { username, roomNumber, email, isAdmin } = response.data.user;
-        setUser({ username, roomNumber, email, isAdmin });
+        const { username, roomNumber, email, isAdmin, profilePicture } =
+          response.data.user;
+        setUser({ username, roomNumber, email, isAdmin, profilePicture });
         setIsAuthenticated(true);
         toast.success(t('login.success'));
       } else {
@@ -91,6 +95,55 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, [t]);
 
+  const updateUser = async (username: string) => {
+    if (!username) {
+      toast.error(t('update.noFields'));
+      return;
+    }
+
+    try {
+      await axiosInstance.put<LoginResponse>(
+        '/user/update',
+        { username },
+        { withCredentials: true }
+      );
+
+      setUser((prevUser) => ({ ...prevUser!, username }));
+      toast.success(t('update.success'));
+    } catch {
+      toast.error(t('update.failed'));
+    }
+  };
+
+  const updateUserPicture = async (file: File) => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('profilePicture', file);
+
+    try {
+      const response = await axiosInstance.put(
+        '/user/update/picture',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.status) {
+        setUser((prevUser) => ({
+          ...prevUser!,
+          profilePicture: response.data.profilePicture,
+        }));
+      }
+    } catch (error) {
+      console.error('Error updating profile picture:', error);
+    }
+  };
+
   useEffect(() => {
     checkSession();
   }, [checkSession]);
@@ -103,6 +156,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         checkSession,
         login,
         logout,
+        updateUser,
+        updateUserPicture,
       }}
     >
       {children}

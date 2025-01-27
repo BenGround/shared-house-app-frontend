@@ -11,10 +11,9 @@ import MenuList from '@mui/material/MenuList';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
-
 import { useRouter, usePathname } from '../../routes/hooks';
-
 import { useUser } from 'src/contexts/userContext';
+import { useTranslation } from 'react-i18next';
 
 export type AccountPopoverProps = IconButtonProps & {
   data?: {
@@ -30,6 +29,7 @@ export function AccountPopover({
   sx,
   ...other
 }: AccountPopoverProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const { logout, user } = useUser();
 
@@ -60,7 +60,6 @@ export function AccountPopover({
 
   const handleLogout = async () => {
     logout();
-    router.push('/sign-in');
   };
 
   return (
@@ -77,9 +76,16 @@ export function AccountPopover({
         }}
         {...other}
       >
-        <Avatar src={''} alt={user?.username} sx={{ width: 1, height: 1 }}>
-          {user?.username?.charAt(0).toUpperCase()}
-        </Avatar>
+        {user?.profilePicture ? (
+          <Avatar
+            src={String(user.profilePicture)}
+            sx={{ width: 1, height: 1 }}
+          />
+        ) : (
+          <Avatar sx={{ width: 1, height: 1 }}>
+            {user?.username?.charAt(0).toUpperCase()}
+          </Avatar>
+        )}
       </IconButton>
 
       <Popover
@@ -149,7 +155,7 @@ export function AccountPopover({
             variant="text"
             onClick={() => handleLogout()}
           >
-            Logout
+            {t('logout')}
           </Button>
         </Box>
       </Popover>

@@ -8,6 +8,7 @@ import { DashboardLayout } from 'src/layouts/dashboard';
 import ProtectedRoute from './protectedRoute';
 import { useShareSpaces } from 'src/contexts/shareSpacesContext';
 import { ClipLoader } from 'react-spinners';
+import { useUser } from 'src/contexts/userContext';
 
 export const HomePage = lazy(() => import('../pages/home'));
 export const BookingsPage = lazy(() => import('../pages/bookings'));
@@ -18,6 +19,7 @@ export const BookingCalendar = lazy(
   () => import('../sections/bookings/bookingCalendar')
 );
 export const CreatePassword = lazy(() => import('../pages/create-password'));
+export const ProfilePage = lazy(() => import('../pages/profile'));
 
 const renderFallback = (
   <Box sx={{ textAlign: 'center', marginTop: '25vh' }}>
@@ -25,18 +27,16 @@ const renderFallback = (
   </Box>
 );
 
-const isAuthenticated = () => {
-  return localStorage.getItem('auth_token') !== null;
-};
-
 export function Router() {
-  const { sharedSpaces, isLoading, error, fetchSharePlaces } = useShareSpaces();
+  const { isAuthenticated } = useUser();
+  const { sharedSpaces, isLoading, error, done, fetchShareSpaces } =
+    useShareSpaces();
 
   useEffect(() => {
-    if (sharedSpaces.length === 0) {
-      fetchSharePlaces();
+    if (!isLoading && !done) {
+      fetchShareSpaces();
     }
-  }, [sharedSpaces, fetchSharePlaces]);
+  }, [done, isLoading, fetchShareSpaces]);
 
   const routes = useRoutes([
     {
@@ -58,7 +58,7 @@ export function Router() {
             sharedSpaces.length > 0 ? (
               <Navigate to={`/bookings/${sharedSpaces[0]?.nameCode}`} replace />
             ) : (
-              <Page404 /> // Fallback to 404 if sharedSpaces is empty
+              <Page404 />
             ),
         },
         {
@@ -69,11 +69,15 @@ export function Router() {
           element: <ProtectedRoute element={<UserPage />} />,
           path: 'user',
         },
+        {
+          element: <ProtectedRoute element={<ProfilePage />} />,
+          path: 'profile',
+        },
       ],
     },
     {
       path: 'create-password',
-      element: isAuthenticated() ? (
+      element: isAuthenticated ? (
         <Navigate to="/" replace />
       ) : (
         <AuthLayout>
@@ -83,7 +87,7 @@ export function Router() {
     },
     {
       path: 'sign-in',
-      element: isAuthenticated() ? (
+      element: isAuthenticated ? (
         <Navigate to="/" replace />
       ) : (
         <AuthLayout>

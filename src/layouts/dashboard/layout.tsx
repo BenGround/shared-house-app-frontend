@@ -88,7 +88,7 @@ export function DashboardLayout({
                       },
                       {
                         label: t('account.popover.profile'),
-                        href: '#',
+                        href: '/profile',
                         icon: (
                           <Iconify
                             width={22}
@@ -96,7 +96,7 @@ export function DashboardLayout({
                           />
                         ),
                       },
-                      {
+                      /*{
                         label: t('account.popover.settings'),
                         href: '#',
                         icon: (
@@ -105,7 +105,7 @@ export function DashboardLayout({
                             icon="solar:settings-bold-duotone"
                           />
                         ),
-                      },
+                      },*/
                     ]}
                   />
                 </Box>

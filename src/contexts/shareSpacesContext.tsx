@@ -7,7 +7,8 @@ interface ShareSpacesContextType {
   sharedSpaces: SharedSpace[];
   isLoading: boolean;
   error: string | null;
-  fetchSharePlaces: () => void;
+  done: boolean;
+  fetchShareSpaces: () => void;
 }
 
 const ShareSpacesContext = createContext<ShareSpacesContextType | undefined>(
@@ -28,10 +29,10 @@ export const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [sharedSpaces, setSharedSpaces] = useState<SharedSpace[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [done, setDone] = useState<boolean>(false);
 
   const fetchShareSpaces = async () => {
     setIsLoading(true);
-    setError(null);
 
     try {
       const response = await axiosInstance.get('sharedspace/list');
@@ -40,6 +41,7 @@ export const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
       setError(handleError(error));
     } finally {
       setIsLoading(false);
+      setDone(true);
     }
   };
 
@@ -53,7 +55,8 @@ export const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
         sharedSpaces,
         isLoading,
         error,
-        fetchSharePlaces: fetchShareSpaces,
+        fetchShareSpaces,
+        done,
       }}
     >
       {children}

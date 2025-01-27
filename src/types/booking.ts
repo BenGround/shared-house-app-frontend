@@ -4,4 +4,5 @@ export interface Booking {
   endDate: string;
   username: string;
   roomNumber: string;
+  picture: string;
 }

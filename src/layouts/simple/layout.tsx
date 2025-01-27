@@ -41,16 +41,6 @@ export function SimpleLayout({
                 This is an info Alert.
               </Alert>
             ),
-            rightArea: (
-              <Link
-                href="#"
-                component={RouterLink}
-                color="inherit"
-                sx={{ typography: 'subtitle2' }}
-              >
-                Need help?
-              </Link>
-            ),
           }}
         />
       }

@@ -23,6 +23,7 @@ export type NavContentProps = {
     info?: React.ReactNode;
     admin?: boolean;
   }[];
+  onNavItemClick?: () => void;
 };
 
 export function NavDesktop({
@@ -77,19 +78,18 @@ export function NavMobile({
         },
       }}
     >
-      <NavContent data={data} />
+      <NavContent data={data} onNavItemClick={onClose} />
     </Drawer>
   );
 }
 
-export function NavContent({ data }: NavContentProps) {
+export function NavContent({ data, onNavItemClick }: NavContentProps) {
   const { t } = useTranslation();
+  const { user } = useUser();
   const pathname = usePathname();
 
-  const { user } = useUser();
-
   if (!user?.isAdmin) {
-    data.filter((navItem) => !navItem.admin);
+    data = data.filter((navItem) => !navItem.admin);
   }
 
   return (
@@ -122,6 +122,7 @@ export function NavContent({ data }: NavContentProps) {
                     disableGutters
                     component={RouterLink}
                     href={item.path}
+                    onClick={onNavItemClick} // This will work if onNavItemClick is passed, else it will be ignored
                     sx={{
                       pl: 2,
                       py: 1,

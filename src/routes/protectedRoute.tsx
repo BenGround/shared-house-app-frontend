@@ -9,20 +9,17 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
+  const { isAuthenticated, checkSession } = useUser();
   const [isAuthChecked, setIsAuthChecked] = useState<boolean>(false);
-  const [isAuthenticatedState, setIsAuthenticatedState] =
-    useState<boolean>(false);
-  const { isAuthenticated } = useUser();
 
   useEffect(() => {
     const checkAuth = async () => {
-      const authenticated = isAuthenticated;
-      setIsAuthenticatedState(authenticated);
+      await checkSession();
       setIsAuthChecked(true);
     };
 
     checkAuth();
-  }, [isAuthenticated]);
+  }, [checkSession]);
 
   if (!isAuthChecked) {
     return (
@@ -32,7 +29,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
     );
   }
 
-  if (!isAuthenticatedState) {
+  if (!isAuthenticated) {
     return <Navigate to="/sign-in" replace />;
   }
 

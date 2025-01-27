@@ -18,8 +18,9 @@ const BookingSwiper: React.FC<BookingModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const [swiperInstance, setSwiperInstance] = useState<any>(null);
+  const [indexHours, setIndex] = useState<number>(-1);
 
-  const generateBookingHours = (maxHours: number) => {
+  const generateBookingHours = (maxHours: number): number[] => {
     const hoursArray = [];
     for (let i = 0.5; i <= maxHours; i += 0.5) {
       hoursArray.push(i);
@@ -31,6 +32,7 @@ const BookingSwiper: React.FC<BookingModalProps> = ({
 
   useEffect(() => {
     const index = bookingHours.indexOf(hours);
+    setIndex(index);
     swiperInstance?.slideTo(index, 0);
   }, [hours, bookingHours, swiperInstance]);
 
@@ -64,7 +66,9 @@ const BookingSwiper: React.FC<BookingModalProps> = ({
     if (minutes === 0) {
       return `${wholeHours}${t('bookings.hours')}`;
     }
-    return `${wholeHours}${t('bookings.hours')} ${minutes}${t('bookings.mins')}`;
+    return `${wholeHours}${t('bookings.hours')} ${minutes}${t(
+      'bookings.mins'
+    )}`;
   };
 
   return (
@@ -75,7 +79,7 @@ const BookingSwiper: React.FC<BookingModalProps> = ({
       }}
     >
       <Typography variant="h6" sx={{ marginBottom: 2 }}>
-        Select Booking Hours
+        {t('select.booking.hours')}
       </Typography>
 
       {/* Wrapper to position Swiper and buttons */}
@@ -90,7 +94,7 @@ const BookingSwiper: React.FC<BookingModalProps> = ({
         {/* Left Button */}
         <IconButton
           onClick={handlePrev}
-          disabled={swiperInstance?.activeIndex === 0}
+          disabled={indexHours < 1}
           sx={{
             position: 'absolute',
             left: -10,
@@ -131,10 +135,10 @@ const BookingSwiper: React.FC<BookingModalProps> = ({
 
         <IconButton
           onClick={handleNext}
-          disabled={swiperInstance?.activeIndex === bookingHours.length - 1}
+          disabled={indexHours >= bookingHours.length - 1}
           sx={{
             position: 'absolute',
-            right: -10, // Shift slightly outward
+            right: -10,
             zIndex: 10,
             width: 50,
             height: 50,

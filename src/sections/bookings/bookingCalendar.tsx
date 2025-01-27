@@ -27,6 +27,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
     new DayPilot.Date()
   );
   const [events, setEvents] = useState<DayPilot.EventData[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<DayPilot.EventData | null>(
     null
   );
@@ -47,6 +48,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
           endDate: startDate.addDays(7).toString('yyyy-MM-dd'),
         },
       });
+      setBookings(response.data);
 
       const newEvents = response.data.map((booking: Booking) => ({
         id: booking.id,
@@ -177,6 +179,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
       } else {
         throw new Error(response.data);
       }
+      setBookings((prevBookings) => [...prevBookings, response.data.booking]);
 
       tokyoStartDate.hours(tokyoStartDate.hours() + 9);
       tokyoEndDate.hours(tokyoEndDate.hours() + 9);
@@ -221,14 +224,13 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
         >
           <Typography
             variant="h5"
-            sx={{ fontWeight: 'bold', textShadow: '2px 2px 4px #000000' }}
+            sx={{
+              fontWeight: 'bold',
+              textShadow: '2px 2px 4px #000000',
+            }}
           >
             {t(sharedSpace.nameCode)}
           </Typography>
-          <Typography variant="body2" style={{ textAlign: 'center' }}>
-            {sharedSpace.description}
-          </Typography>
-
           <Typography variant="body1">
             {t('bookings.maxBookingHours', {
               hours: sharedSpace.maxBookingHours,
@@ -321,12 +323,38 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
             const eventStart = args.data.start;
             const eventEnd = args.data.end;
 
+            const actualBooking = bookings.find(
+              (booking) => booking.id === args.data.id
+            );
+
+            if (!isMobile && actualBooking) {
+              const avatarHtml = actualBooking.picture
+                ? `<div style="display: flex; align-items: flex-start; margin: 2px 10px 10px 3px">
+                  <div style="display: flex; flex-direction: column; align-items: center; margin-right: 5px">
+                    <img
+                      src="${String(actualBooking.picture)}"
+                      style="width: 20px; height: 20px; border-radius: 50%; align-self: flex-start;"
+                    />
+                  </div>
+                  <div style="flex: 1; display: flex; align-items: center; overflow: hidden; text-overflow: ellipsis;">
+                    <span style="white-space: collapse; overflow: hidden; text-overflow: ellipsis;">
+                      ${actualBooking.roomNumber} ${actualBooking.username}
+                    </span>
+                  </div>
+                </div>`
+                : `<div style="display: flex; align-items: center">
+                  <span>${actualBooking.roomNumber} ${actualBooking.username}</span>
+                </div>`;
+              args.data.html = avatarHtml;
+            }
+
             if (eventStart <= now && now < eventEnd) {
               args.data.backColor = '#e6fff2';
               args.data.text = `${args.data.text} - ${t('bookings.ongoing')}`;
             }
+
             if (args.data.text !== user?.roomNumber) {
-              args.data.barHidden = true;
+              args.data.backColor = '#eaeaea';
             }
           }}
         />
