@@ -45,7 +45,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
       const response = await axiosInstance.get(`bookings/${sharedSpace.id}`, {
         params: {
           startDate: startDate.toString('yyyy-MM-dd'),
-          endDate: startDate.addDays(7).toString('yyyy-MM-dd'),
+          endDate: startDate.addDays(isMobile ? 1 : 7).toString('yyyy-MM-dd'),
         },
       });
       setBookings(response.data);
@@ -92,8 +92,10 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
     );
   }
 
-  const handlePreviousWeek = () => setStartDate((prev) => prev.addDays(-7));
-  const handleNextWeek = () => setStartDate((prev) => prev.addDays(7));
+  const handlePrevious = () =>
+    setStartDate((prev) => prev.addDays(isMobile ? -1 : -7));
+  const handleNext = () =>
+    setStartDate((prev) => prev.addDays(isMobile ? 1 : 7));
 
   const handleTimeRangeSelected = async (
     args: DayPilot.CalendarTimeRangeSelectedArgs
@@ -253,40 +255,46 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
           alignItems="center"
           justifyContent="center"
         >
-          <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-            {t('bookings.weekNumber', {
-              week: startDate.weekNumber(),
-              year: startDate.getYear(),
-            })}
-          </Typography>
+          {!isMobile && (
+            <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+              {t('bookings.weekNumber', {
+                week: startDate.weekNumber(),
+                year: startDate.getYear(),
+              })}
+            </Typography>
+          )}
 
           {isMobile && (
             <Typography variant="h6">
-              {startDate.toDate().toLocaleString(language, { month: 'long' })}
+              {startDate.toDate().toLocaleString(language, {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+              })}
             </Typography>
           )}
         </Box>
 
         <ButtonGroup variant="contained" sx={{ width: '100%' }}>
           <Button
-            onClick={handlePreviousWeek}
+            onClick={handlePrevious}
             sx={{
               textTransform: 'none',
               width: '50%',
               borderRadius: '5px 0px 0px 0px',
             }}
           >
-            {t('bookings.previousWeek')}
+            {isMobile ? t('bookings.previousDay') : t('bookings.previousWeek')}
           </Button>
           <Button
-            onClick={handleNextWeek}
+            onClick={handleNext}
             sx={{
               textTransform: 'none',
               width: '50%',
               borderRadius: '0px 5px 0px 0px',
             }}
           >
-            {t('bookings.nextWeek')}
+            {isMobile ? t('bookings.nextDay') : t('bookings.nextWeek')}
           </Button>
         </ButtonGroup>
 
@@ -295,8 +303,8 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
           timeRangeSelectedHandling="Enabled"
           onTimeRangeSelected={handleTimeRangeSelected}
           events={events}
-          headerDateFormat={isMobile ? 'dd' : 'MMMM dd'}
-          viewType="Week"
+          headerDateFormat="MMMM dd"
+          viewType={isMobile ? 'Days' : 'Week'}
           startDate={startDate}
           onEventClick={handleEventClick}
           onEventDelete={handleDelete}
@@ -328,6 +336,9 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
             );
 
             if (!isMobile && actualBooking) {
+              const nameText = actualBooking.username
+                ? `${actualBooking.roomNumber} - ${actualBooking.username}`
+                : actualBooking.roomNumber;
               const avatarHtml = actualBooking.picture
                 ? `<div style="display: flex; align-items: flex-start; margin: 2px 10px 10px 3px">
                   <div style="display: flex; flex-direction: column; align-items: center; margin-right: 5px">
@@ -338,12 +349,12 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
                   </div>
                   <div style="flex: 1; display: flex; align-items: center; overflow: hidden; text-overflow: ellipsis;">
                     <span style="white-space: collapse; overflow: hidden; text-overflow: ellipsis;">
-                      ${actualBooking.roomNumber} ${actualBooking.username}
+                      ${nameText}
                     </span>
                   </div>
                 </div>`
                 : `<div style="display: flex; align-items: center">
-                  <span>${actualBooking.roomNumber} ${actualBooking.username}</span>
+                  <span>${nameText}</span>
                 </div>`;
               args.data.html = avatarHtml;
             }
