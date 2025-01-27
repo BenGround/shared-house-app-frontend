@@ -268,7 +268,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
 
           {isMobile && (
             <Typography variant="h6">
-              {startDate.toDate().toLocaleString(language, {
+              {startDate.toDateLocal().toLocaleString(language, {
                 month: 'long',
                 day: 'numeric',
                 year: 'numeric',
@@ -317,7 +317,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
             <ClipLoader color="#007bff" size={50} />
           </Box>
         )}
-
         <DayPilotCalendar
           durationBarVisible
           timeRangeSelectedHandling="Enabled"
