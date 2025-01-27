@@ -23,6 +23,7 @@ export const Main: React.FC = () => {
             mb: 3,
             fontSize: { xs: '1.5rem', md: '2rem' },
             textShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)',
+            textAlign: 'center',
           }}
         >
           {t('welcomeback', { name: user?.username })}

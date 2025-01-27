@@ -34,7 +34,6 @@ export function SignInView() {
     async (e: React.FormEvent) => {
       e.preventDefault();
       await login(roomNumber, password);
-      router.push('/');
     },
     [roomNumber, password, router, login]
   );

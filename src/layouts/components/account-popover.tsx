@@ -70,9 +70,6 @@ export function AccountPopover({
           p: '2px',
           width: 40,
           height: 40,
-          background: (theme) =>
-            `conic-gradient(${theme.vars.palette.primary.light}, ${theme.vars.palette.warning.light}, ${theme.vars.palette.primary.light})`,
-          ...sx,
         }}
         {...other}
       >

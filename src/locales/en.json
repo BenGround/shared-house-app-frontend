@@ -27,6 +27,8 @@
 	"bookings.deleteSuccess": "Booking deleted successfully",
 	"bookings.previousWeek": "Previous Week",
 	"bookings.nextWeek": "Next Week",
+	"bookings.previousDay": "Previous Day",
+	"bookings.nextDay": "Next Day",
 	"bookings.maxBookingHours": "Maximum booking timeslot: {{hours}} hour(s)",
 	"bookings.remaining": "Remaining booking(s): {{remaining}}",
 	"bookings.weekNumber": "Week {{week}}, {{year}}",
@@ -75,7 +77,12 @@
 	"select.booking.hours": "Select Booking Hours",
 	"profile": "Profile",
 	"profile.change.picture": "Change profile picture",
+	"profile.delete.picture": "Remove profile picture",
 	"profile.save.changes": "Save changes",
+	"profile.picture.confirmDelete": "Do you want to delete the profile picture?",
+	"profile.username.validationMessage": "Username must be between 3 and 25 characters long and contain only letters, numbers, spaces, underscores, or Japanese characters",
 	"email": "Email",
-	"username": "Username"
+	"username": "Username",
+	"update.failed": "Update failed",
+	"update.success": "Update success"
 }

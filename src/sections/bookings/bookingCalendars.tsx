@@ -59,7 +59,6 @@ const BookingCalendars: React.FC<BookingCalendarsProps> = ({
           </Tabs>
         </Box>
 
-        {/* Render the selected booking calendar */}
         <Box sx={{ p: 3 }}>
           {shareSpace ? (
             <BookingCalendar sharedSpace={shareSpace} />

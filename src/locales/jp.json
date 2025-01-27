@@ -27,6 +27,8 @@
 	"bookings.deleteSuccess": "予約が削除されました",
 	"bookings.previousWeek": "前の週",
 	"bookings.nextWeek": "次の週",
+	"bookings.previousDay": "前日",
+	"bookings.nextDay": "翌日",
 	"bookings.maxBookingHours": "最大予約時間: {{hours}} 時間",
 	"bookings.remaining": "残り予約数: {{remaining}}",
 	"bookings.weekNumber": "週 {{week}}, {{year}}",
@@ -75,7 +77,12 @@
 	"password.created": "パスワードが正常に作成されました",
 	"profile": "プロフィール",
 	"profile.change.picture": "プロフィール写真を変更する",
+	"profile.delete.picture": "プロフィール写真を削除",
 	"profile.save.changes": "変更を保存する",
+	"profile.picture.confirmDelete": "プロフィール写真を削除しますか？",
+	"profile.username.validationMessage": "ユーザー名は3文字以上25文字以内で、英字、数字、スペース、アンダースコア、または日本語の文字のみを含む必要があります",
 	"email": "メールアドレス",
-	"username": "ユーザー名"
+	"username": "ユーザー名",
+	"update.failed": "更新に失敗しました",
+	"update.success": "更新に成功しました"
 }

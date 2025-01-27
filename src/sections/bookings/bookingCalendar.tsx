@@ -38,9 +38,12 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
   );
   const [bookingTimeHours, setBookingTimeHours] = useState<number>(0);
   const [numberBookings, setNumberBookings] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchBookings = useCallback(async () => {
     if (!sharedSpace) return;
+    setLoading(true);
+
     try {
       const response = await axiosInstance.get(`bookings/${sharedSpace.id}`, {
         params: {
@@ -59,6 +62,8 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
       setEvents(newEvents);
     } catch (error: Error | any) {
       handleError(error);
+    } finally {
+      setLoading(false);
     }
   }, [sharedSpace, startDate]);
 
@@ -129,20 +134,13 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
     setModalOpen(true);
   };
 
-  const handleDelete = async (args: DayPilot.CalendarEventDeleteArgs) => {
-    args.preventDefault();
-    if (new DayPilot.Date(args.e.data.start) < new DayPilot.Date()) {
-      toast.warn(t('bookings.cannotDeletePastBookings'));
-      return;
-    }
-
+  const deleteEvent = async (eventId: number) => {
     const confirmed = window.confirm(t('bookings.confirmDelete'));
     if (!confirmed) {
       return;
     }
 
     try {
-      const eventId = args.e.data.id;
       const response = await axiosInstance.delete(`bookings/${eventId}`, {
         withCredentials: true,
       });
@@ -161,6 +159,8 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
   };
 
   const createBookingApiCall = async (startDate: Date, hours: number) => {
+    setLoading(true);
+
     try {
       const tokyoStartDate = moment.tz(startDate, 'Asia/Tokyo');
       const tokyoEndDate = tokyoStartDate.clone().add(hours, 'hours');
@@ -196,6 +196,8 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
       setEvents((prevEvents) => [...prevEvents, newEvent]);
     } catch (error: Error | any) {
       handleError(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -233,7 +235,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
           >
             {t(sharedSpace.nameCode)}
           </Typography>
-          <Typography variant="body1">
+          <Typography variant="body1" sx={{ textAlign: 'center' }}>
             {t('bookings.maxBookingHours', {
               hours: sharedSpace.maxBookingHours,
             })}
@@ -298,6 +300,24 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
           </Button>
         </ButtonGroup>
 
+        {loading && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 10,
+            }}
+          >
+            <ClipLoader color="#007bff" size={50} />
+          </Box>
+        )}
+
         <DayPilotCalendar
           durationBarVisible
           timeRangeSelectedHandling="Enabled"
@@ -307,10 +327,8 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
           viewType={isMobile ? 'Days' : 'Week'}
           startDate={startDate}
           onEventClick={handleEventClick}
-          onEventDelete={handleDelete}
           eventMoveHandling="Disabled"
           eventResizeHandling="Disabled"
-          eventDeleteHandling="Update"
           heightSpec="BusinessHoursNoScroll"
           businessBeginsHour={parseInt(sharedSpace.startDayTime.split(':')[0])}
           businessEndsHour={parseInt(sharedSpace.endDayTime.split(':')[0])}
@@ -335,7 +353,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
               (booking) => booking.id === args.data.id
             );
 
-            if (!isMobile && actualBooking) {
+            if (actualBooking) {
               const nameText = actualBooking.username
                 ? `${actualBooking.roomNumber} - ${actualBooking.username}`
                 : actualBooking.roomNumber;
@@ -370,11 +388,14 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
           }}
         />
       </Card>
-      <BookingModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        selectedEvent={selectedEvent}
-      />
+      {selectedEvent && (
+        <BookingModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          selectedEvent={selectedEvent}
+          onDelete={(id) => deleteEvent(id)}
+        />
+      )}
 
       <BookingCreateDialog
         open={dialogOpen}

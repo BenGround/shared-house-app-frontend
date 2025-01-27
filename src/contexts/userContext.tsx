@@ -32,6 +32,7 @@ interface UserContextType {
   logout: () => Promise<void>;
   updateUser: (username: string) => Promise<void>;
   updateUserPicture: (file: File) => Promise<void>;
+  removeUserPicture: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -133,14 +134,39 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         }
       );
 
-      if (response.data.status) {
+      if (response.status === 200) {
         setUser((prevUser) => ({
           ...prevUser!,
           profilePicture: response.data.profilePicture,
         }));
+        toast.success(t('update.success'));
       }
     } catch (error) {
+      toast.error(t('update.failed'));
       console.error('Error updating profile picture:', error);
+    }
+  };
+
+  const removeUserPicture = async () => {
+    try {
+      const response = await axiosInstance.put(
+        '/user/delete/picture',
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.status === 200) {
+        setUser((prevUser) => ({
+          ...prevUser!,
+          profilePicture: undefined,
+        }));
+        toast.success(t('update.success'));
+      }
+    } catch (error) {
+      toast.error(t('update.failed'));
+      console.error('Error delete profile picture:', error);
     }
   };
 
@@ -158,6 +184,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         logout,
         updateUser,
         updateUserPicture,
+        removeUserPicture,
       }}
     >
       {children}
