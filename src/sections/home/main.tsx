@@ -15,24 +15,26 @@ export const Main: React.FC = () => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          mb: 3,
         }}
       >
         <Typography
           variant="h4"
           sx={{
-            mb: 3,
             fontSize: { xs: '1.5rem', md: '2rem' },
             textShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)',
             textAlign: 'center',
+            fontWeight: 'bold',
           }}
         >
           {t('welcomeback', { name: user?.username })}
         </Typography>
       </Box>
+
       <Box
         sx={{
           width: '100%',
-          height: 495,
+          height: { xs: 350, md: 495 },
           backgroundImage: `url('/assets/home.jpg')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
@@ -41,21 +43,25 @@ export const Main: React.FC = () => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: 5,
+          padding: { xs: 3, md: 5 },
           textAlign: 'center',
           color: 'white',
+          boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.4)',
         }}
       >
         <Typography
           variant="h1"
           sx={{
             fontWeight: 'bold',
-            textShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)',
+            textShadow: '1px 1px 2px rgba(0, 0, 0, 0.4)',
+            fontSize: { xs: '2.5rem', md: '3.5rem' },
           }}
         >
           {t('sharehouse.name')}
         </Typography>
-        <Typography variant="h5">{t('web.application')}</Typography>
+        <Typography variant="h5" sx={{ fontWeight: 300 }}>
+          {t('web.application')}
+        </Typography>
       </Box>
     </DashboardContent>
   );

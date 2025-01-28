@@ -1,19 +1,25 @@
-import { useState, useEffect, useCallback } from 'react';
+import { lazy, Suspense, useState, useEffect, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter } from 'src/routes/hooks';
-import { Iconify } from 'src/components/iconify';
 import { useUser } from 'src/contexts/userContext';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import { Iconify } from 'src/components/iconify';
+
+const LoadingButton = lazy(() => import('@mui/lab/LoadingButton'));
+const renderFallback = <div>Loading...</div>;
 
 const SignIn: React.FC = () => {
-  return <SignInView />;
+  return (
+    <Suspense fallback={renderFallback}>
+      <SignInView />
+    </Suspense>
+  );
 };
 
 export function SignInView() {
@@ -100,15 +106,17 @@ export function SignInView() {
             required
           />
 
-          <LoadingButton
-            fullWidth
-            size="large"
-            type="submit"
-            color="inherit"
-            variant="contained"
-          >
-            {t('signin')}
-          </LoadingButton>
+          <Suspense fallback={renderFallback}>
+            <LoadingButton
+              fullWidth
+              size="large"
+              type="submit"
+              color="inherit"
+              variant="contained"
+            >
+              {t('signin')}
+            </LoadingButton>
+          </Suspense>
         </Box>
       </form>
     </>

@@ -8,7 +8,6 @@ interface ShareSpacesContextType {
   isLoading: boolean;
   error: string | null;
   done: boolean;
-  fetchShareSpaces: () => void;
 }
 
 const ShareSpacesContext = createContext<ShareSpacesContextType | undefined>(
@@ -23,7 +22,7 @@ export const useShareSpaces = () => {
   return context;
 };
 
-export const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
+const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [sharedSpaces, setSharedSpaces] = useState<SharedSpace[]>([]);
@@ -32,6 +31,9 @@ export const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [done, setDone] = useState<boolean>(false);
 
   const fetchShareSpaces = async () => {
+    if (isLoading) {
+      return;
+    }
     setIsLoading(true);
 
     try {
@@ -55,7 +57,6 @@ export const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
         sharedSpaces,
         isLoading,
         error,
-        fetchShareSpaces,
         done,
       }}
     >
@@ -63,3 +64,5 @@ export const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
     </ShareSpacesContext.Provider>
   );
 };
+
+export default ShareSpacesProvider;

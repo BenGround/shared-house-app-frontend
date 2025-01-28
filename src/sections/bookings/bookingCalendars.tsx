@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Box, Tab, Tabs, Typography } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-import BookingCalendar from './bookingCalendar';
 import { useTranslation } from 'react-i18next';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useShareSpaces } from 'src/contexts/shareSpacesContext';
+
+const BookingCalendar = React.lazy(() => import('./bookingCalendar'));
 
 type BookingCalendarsProps = {
   sharedSpaceNameCode: string | undefined;
@@ -36,7 +37,7 @@ const BookingCalendars: React.FC<BookingCalendarsProps> = ({
     sharedSpaces[0];
 
   return (
-    <DashboardContent maxWidth="xl">
+    <DashboardContent>
       <Box sx={{ width: '100%' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs
@@ -59,9 +60,13 @@ const BookingCalendars: React.FC<BookingCalendarsProps> = ({
           </Tabs>
         </Box>
 
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 1 }}>
           {shareSpace ? (
-            <BookingCalendar sharedSpace={shareSpace} />
+            <Suspense
+              fallback={<Typography variant="h6">{t('loading')}...</Typography>}
+            >
+              <BookingCalendar sharedSpace={shareSpace} />
+            </Suspense>
           ) : (
             <Typography variant="h5">
               {t('bookings.selectSharedSpace')}

@@ -1,11 +1,18 @@
-const path = require('path');
-const webpack = require('webpack');
-const envPath = path.resolve(__dirname, '.env');
-const envVars = require('dotenv').config({ path: envPath }).parsed || {};
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+import path from 'path';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
+import TerserPlugin from 'terser-webpack-plugin';
+import webpack from 'webpack';
 
-module.exports = {
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const envPath = path.resolve(__dirname, '.env');
+const envVars = dotenv.config({ path: envPath }).parsed || {};
+
+export default {
+  mode: 'production',
   entry: {
     main: './src/index.tsx',
   },
@@ -40,7 +47,7 @@ module.exports = {
     },
     extensions: ['.ts', '.tsx', '.js', '.json'],
     fallback: {
-      process: require.resolve('process/browser'),
+      process: 'process/browser',
     },
   },
   module: {
@@ -57,6 +64,7 @@ module.exports = {
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
         type: 'asset/resource',
+        use: ['image-webpack-loader'],
         generator: {
           filename: 'assets/[name].[hash][ext][query]',
         },
@@ -70,9 +78,38 @@ module.exports = {
     historyApiFallback: true,
     hot: true,
   },
+  performance: {
+    maxAssetSize: 500000,
+    maxEntrypointSize: 1000000,
+    hints: 'warning',
+  },
   optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true,
+          },
+        },
+      }),
+    ],
+    usedExports: true,
     splitChunks: {
       chunks: 'all',
+      minSize: 20000,
+      maxSize: 244000,
+      cacheGroups: {
+        default: {
+          minChunks: 2,
+        },
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+          priority: 10,
+        },
+      },
     },
   },
 };

@@ -1,7 +1,9 @@
 import { Helmet } from 'react-helmet-async';
 import { CONFIG } from '../config-global';
-import { Profile } from '../sections/profile';
 import { useTranslation } from 'react-i18next';
+import { Suspense, lazy } from 'react';
+
+const ProfileLazy = lazy(() => import('../sections/profile/profile'));
 
 export default function Page() {
   const { t } = useTranslation();
@@ -9,10 +11,20 @@ export default function Page() {
   return (
     <>
       <Helmet>
-        <title> {`${t('profile')} - ${CONFIG.appName}`}</title>
+        <title>{`${t('profile')} - ${CONFIG.appName}`}</title>
+        <meta
+          name="description"
+          content={`${t('profile')} - ${CONFIG.appName}`}
+        />
+        <meta
+          property="og:title"
+          content={`${t('profile')} - ${CONFIG.appName}`}
+        />
       </Helmet>
 
-      <Profile />
+      <Suspense fallback={<div>Loading...</div>}>
+        <ProfileLazy />
+      </Suspense>
     </>
   );
 }

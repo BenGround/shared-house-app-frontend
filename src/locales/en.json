@@ -84,5 +84,6 @@
 	"email": "Email",
 	"username": "Username",
 	"update.failed": "Update failed",
-	"update.success": "Update success"
+	"update.success": "Update success",
+	"loading.element": "Loading component"
 }

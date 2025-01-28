@@ -1,26 +1,31 @@
-import { BrowserRouter } from 'react-router-dom';
-import { Router } from './routes/sections';
-import { UserProvider } from './contexts/userContext';
-import { ThemeProvider } from 'src/theme/theme-provider';
+import React, { Suspense } from 'react';
 import { HelmetProvider } from 'react-helmet-async';
+import { BrowserRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { ShareSpacesProvider } from './contexts/shareSpacesContext';
+
+const Router = React.lazy(() => import('./routes/sections'));
+const UserProvider = React.lazy(() => import('./contexts/userContext'));
+const ShareSpacesProvider = React.lazy(
+  () => import('./contexts/shareSpacesContext')
+);
+const ThemeProvider = React.lazy(() => import('./theme/theme-provider'));
 
 function App() {
   return (
-    <HelmetProvider>
-      <ThemeProvider>
-        <UserProvider>
-          <ShareSpacesProvider>
-            <ToastContainer position="bottom-right" />
-            <BrowserRouter>
-              <Router />
-            </BrowserRouter>
-          </ShareSpacesProvider>
-        </UserProvider>
-      </ThemeProvider>
-    </HelmetProvider>
+    <Suspense fallback={<div>Loading...</div>}>
+      <HelmetProvider>
+        <ThemeProvider>
+          <UserProvider>
+            <ShareSpacesProvider>
+              <ToastContainer position="bottom-right" />
+              <BrowserRouter>
+                <Router />
+              </BrowserRouter>
+            </ShareSpacesProvider>
+          </UserProvider>
+        </ThemeProvider>
+      </HelmetProvider>
+    </Suspense>
   );
 }
 

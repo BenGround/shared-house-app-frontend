@@ -10,7 +10,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export function ThemeProvider({ children }: Props) {
+function ThemeProvider({ children }: Props) {
   const theme = createTheme();
 
   return (
@@ -20,3 +20,5 @@ export function ThemeProvider({ children }: Props) {
     </CssVarsProvider>
   );
 }
+
+export default ThemeProvider;

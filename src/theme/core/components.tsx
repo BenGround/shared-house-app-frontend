@@ -153,8 +153,6 @@ const MuiRadio: Components<Theme>['MuiRadio'] = {
   },
 };
 
-// ----------------------------------------------------------------------
-
 export const components = {
   MuiCard,
   MuiLink,

@@ -1,8 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
-
 import Box from '@mui/material/Box';
-
 import { AuthLayout } from '../layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
 import ProtectedRoute from './protectedRoute';
@@ -27,16 +25,9 @@ const renderFallback = (
   </Box>
 );
 
-export function Router() {
+function Router() {
   const { isAuthenticated } = useUser();
-  const { sharedSpaces, isLoading, error, done, fetchShareSpaces } =
-    useShareSpaces();
-
-  useEffect(() => {
-    if (!isLoading && !done) {
-      fetchShareSpaces();
-    }
-  }, [done, isLoading, fetchShareSpaces]);
+  const { sharedSpaces, isLoading, error, done } = useShareSpaces();
 
   const routes = useRoutes([
     {
@@ -49,7 +40,7 @@ export function Router() {
       ),
       children: [
         {
-          element: <ProtectedRoute element={<HomePage />} />,
+          element: <ProtectedRoute element={HomePage} />,
           index: true,
         },
         {
@@ -63,14 +54,14 @@ export function Router() {
         },
         {
           path: 'bookings/:sharedSpaceNameCode',
-          element: <ProtectedRoute element={<BookingsPage />} />,
+          element: <ProtectedRoute element={BookingsPage} />,
         },
         {
-          element: <ProtectedRoute element={<UserPage />} />,
+          element: <ProtectedRoute element={UserPage} />,
           path: 'user',
         },
         {
-          element: <ProtectedRoute element={<ProfilePage />} />,
+          element: <ProtectedRoute element={ProfilePage} />,
           path: 'profile',
         },
       ],
@@ -111,3 +102,5 @@ export function Router() {
 
   return routes;
 }
+
+export default Router;

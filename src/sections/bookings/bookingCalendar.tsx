@@ -1,18 +1,23 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, Suspense } from 'react';
 import { Card, ButtonGroup, Button, Box, Typography } from '@mui/material';
-import { DayPilot, DayPilotCalendar } from '@daypilot/daypilot-lite-react';
 import { useUser } from 'src/contexts/userContext';
-import moment from 'moment-timezone';
-import BookingModal from './bookingModal';
-import { Booking } from 'src/types/booking';
-import { toast } from 'react-toastify';
-import axiosInstance from 'src/settings/axiosInstance';
 import { useTranslation } from 'react-i18next';
 import { SharedSpace } from 'src/types/sharedSpace';
 import { getHoursDifference } from 'src/utils/dateUtils';
-import BookingCreateDialog from './bookingCreateDialog';
 import { ClipLoader } from 'react-spinners';
 import { handleError } from 'src/utils/errorHandler';
+import { DayPilot } from '@daypilot/daypilot-lite-react';
+import { toast } from 'react-toastify';
+import axiosInstance from 'src/settings/axiosInstance';
+import { Booking } from 'src/types/booking';
+
+const BookingModal = React.lazy(() => import('./bookingModal'));
+const BookingCreateDialog = React.lazy(() => import('./bookingCreateDialog'));
+const DayPilotCalendar = React.lazy(() =>
+  import('@daypilot/daypilot-lite-react').then((mod) => ({
+    default: mod.DayPilotCalendar,
+  }))
+);
 
 type BookingCalendarProps = {
   sharedSpace: SharedSpace | null;
@@ -140,6 +145,8 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
       return;
     }
 
+    setLoading(true);
+
     try {
       const response = await axiosInstance.delete(`bookings/${eventId}`, {
         withCredentials: true,
@@ -155,6 +162,8 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
       }
     } catch (error: Error | any) {
       handleError(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -162,15 +171,16 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
     setLoading(true);
 
     try {
-      const tokyoStartDate = moment.tz(startDate, 'Asia/Tokyo');
-      const tokyoEndDate = tokyoStartDate.clone().add(hours, 'hours');
+      const tokyoStartDate = startDate;
+      const tokyoEndDate = new Date(tokyoStartDate);
+      tokyoEndDate.setHours(tokyoEndDate.getHours() + hours);
 
       const response = await axiosInstance.post(
         'bookings/create',
         {
           sharedSpaceId: sharedSpace.id,
-          startDate: tokyoStartDate.clone().utc().toISOString(),
-          endDate: tokyoEndDate.clone().utc().toISOString(),
+          startDate: tokyoStartDate.toLocaleDateString(),
+          endDate: tokyoEndDate.toLocaleDateString(),
         },
         { withCredentials: true }
       );
@@ -183,13 +193,13 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
       }
       setBookings((prevBookings) => [...prevBookings, response.data.booking]);
 
-      tokyoStartDate.hours(tokyoStartDate.hours() + 9);
-      tokyoEndDate.hours(tokyoEndDate.hours() + 9);
+      tokyoStartDate.setHours(tokyoStartDate.getHours() + 9);
+      tokyoEndDate.setHours(tokyoEndDate.getHours() + 9);
 
       const newEvent = {
         id: response.data.booking.id,
-        start: new DayPilot.Date(tokyoStartDate.format()),
-        end: new DayPilot.Date(tokyoEndDate.format()),
+        start: new DayPilot.Date(tokyoStartDate.toLocaleDateString()),
+        end: new DayPilot.Date(tokyoEndDate.toLocaleDateString()),
         text: user?.roomNumber || t('bookings.newBooking'),
       };
 
@@ -204,13 +214,12 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
   return (
     <Box
       sx={{
-        mb: { xs: 3, md: 5 },
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-start',
       }}
     >
-      <Card variant="outlined" sx={{ width: '100%', padding: 2 }}>
+      <Card variant="outlined" sx={{ width: '100%', padding: 1 }}>
         <Box
           sx={{
             width: '100%',
@@ -251,7 +260,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
         </Box>
 
         <Box
-          sx={{ width: '100%', padding: 2 }}
+          sx={{ width: '100%', paddingTop: 2 }}
           display="flex"
           flexDirection="column"
           alignItems="center"
@@ -266,144 +275,148 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
             </Typography>
           )}
 
-          {isMobile && (
-            <Typography variant="h6">
-              {startDate.toDateLocal().toLocaleString(language, {
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-              })}
-            </Typography>
-          )}
+          <ButtonGroup variant="contained" sx={{ width: '100%' }}>
+            <Button
+              onClick={handlePrevious}
+              sx={{
+                textTransform: 'none',
+                width: '50%',
+                borderRadius: '5px 0px 0px 0px',
+              }}
+            >
+              {isMobile
+                ? t('bookings.previousDay')
+                : t('bookings.previousWeek')}
+            </Button>
+            <Button
+              onClick={handleNext}
+              sx={{
+                textTransform: 'none',
+                width: '50%',
+                borderRadius: '0px 5px 0px 0px',
+              }}
+            >
+              {isMobile ? t('bookings.nextDay') : t('bookings.nextWeek')}
+            </Button>
+          </ButtonGroup>
+
+          <Suspense fallback={<ClipLoader color="#007bff" size={50} />}>
+            {loading && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  zIndex: 10,
+                }}
+              >
+                <ClipLoader color="#007bff" size={50} />
+              </Box>
+            )}
+            <DayPilotCalendar
+              durationBarVisible
+              timeRangeSelectedHandling="Enabled"
+              onTimeRangeSelected={handleTimeRangeSelected}
+              events={events}
+              headerDateFormat="MMMM dd"
+              viewType={isMobile ? 'Days' : 'Week'}
+              startDate={startDate}
+              onEventClick={handleEventClick}
+              eventMoveHandling="Disabled"
+              eventResizeHandling="Disabled"
+              heightSpec="BusinessHoursNoScroll"
+              businessBeginsHour={parseInt(
+                sharedSpace.startDayTime.split(':')[0]
+              )}
+              businessEndsHour={parseInt(sharedSpace.endDayTime.split(':')[0])}
+              eventBorderRadius="0.5rem"
+              headerHeight={20}
+              headerTextWrappingEnabled={true}
+              hourWidth={50}
+              locale={language}
+              xssProtection={'Enabled'}
+              onBeforeCellRender={(args) => {
+                const { cell } = args;
+                if (cell.start < new DayPilot.Date()) {
+                  cell.properties.backColor = '#e7e7e7';
+                }
+              }}
+              onBeforeEventRender={(args) => {
+                const now = new DayPilot.Date();
+                const eventStart = args.data.start;
+                const eventEnd = args.data.end;
+
+                const actualBooking = bookings.find(
+                  (booking) => booking.id === args.data.id
+                );
+
+                if (actualBooking) {
+                  const nameText = actualBooking.username
+                    ? `${actualBooking.roomNumber} - ${actualBooking.username}`
+                    : actualBooking.roomNumber;
+
+                  const avatarHtml = actualBooking.picture
+                    ? `<div style="display: flex; align-items: flex-start; margin: 2px 10px 10px 3px">
+              <div style="display: flex; flex-direction: column; align-items: center; margin-right: 5px">
+                <img
+                  src="${String(actualBooking.picture)}"
+                  style="width: 20px; height: 20px; border-radius: 50%; align-self: flex-start;"
+                />
+              </div>
+              <div style="flex: 1; display: flex; align-items: center; overflow: hidden; text-overflow: ellipsis;">
+                <span style="white-space: collapse; overflow: hidden; text-overflow: ellipsis;">
+                  ${nameText}
+                </span>
+              </div>
+            </div>`
+                    : `<div style="display: flex; align-items: center">
+              <span>${nameText}</span>
+            </div>`;
+
+                  args.data.html = avatarHtml;
+                }
+
+                if (eventStart <= now && now < eventEnd) {
+                  args.data.backColor = '#e6fff2';
+                  args.data.text = `${args.data.text} - ${t(
+                    'bookings.ongoing'
+                  )}`;
+                }
+
+                if (args.data.text !== user?.roomNumber) {
+                  args.data.backColor = '#eaeaea';
+                }
+              }}
+            />
+          </Suspense>
         </Box>
-
-        <ButtonGroup variant="contained" sx={{ width: '100%' }}>
-          <Button
-            onClick={handlePrevious}
-            sx={{
-              textTransform: 'none',
-              width: '50%',
-              borderRadius: '5px 0px 0px 0px',
-            }}
-          >
-            {isMobile ? t('bookings.previousDay') : t('bookings.previousWeek')}
-          </Button>
-          <Button
-            onClick={handleNext}
-            sx={{
-              textTransform: 'none',
-              width: '50%',
-              borderRadius: '0px 5px 0px 0px',
-            }}
-          >
-            {isMobile ? t('bookings.nextDay') : t('bookings.nextWeek')}
-          </Button>
-        </ButtonGroup>
-
-        {loading && (
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              zIndex: 10,
-            }}
-          >
-            <ClipLoader color="#007bff" size={50} />
-          </Box>
-        )}
-        <DayPilotCalendar
-          durationBarVisible
-          timeRangeSelectedHandling="Enabled"
-          onTimeRangeSelected={handleTimeRangeSelected}
-          events={events}
-          headerDateFormat="MMMM dd"
-          viewType={isMobile ? 'Days' : 'Week'}
-          startDate={startDate}
-          onEventClick={handleEventClick}
-          eventMoveHandling="Disabled"
-          eventResizeHandling="Disabled"
-          heightSpec="BusinessHoursNoScroll"
-          businessBeginsHour={parseInt(sharedSpace.startDayTime.split(':')[0])}
-          businessEndsHour={parseInt(sharedSpace.endDayTime.split(':')[0])}
-          eventBorderRadius="0.5rem"
-          headerHeight={20}
-          headerTextWrappingEnabled={true}
-          hourWidth={50}
-          locale={language}
-          xssProtection={'Enabled'}
-          onBeforeCellRender={(args) => {
-            const { cell } = args;
-            if (cell.start < new DayPilot.Date()) {
-              cell.properties.backColor = '#e7e7e7';
-            }
-          }}
-          onBeforeEventRender={(args) => {
-            const now = new DayPilot.Date();
-            const eventStart = args.data.start;
-            const eventEnd = args.data.end;
-
-            const actualBooking = bookings.find(
-              (booking) => booking.id === args.data.id
-            );
-
-            if (actualBooking) {
-              const nameText = actualBooking.username
-                ? `${actualBooking.roomNumber} - ${actualBooking.username}`
-                : actualBooking.roomNumber;
-              const avatarHtml = actualBooking.picture
-                ? `<div style="display: flex; align-items: flex-start; margin: 2px 10px 10px 3px">
-                  <div style="display: flex; flex-direction: column; align-items: center; margin-right: 5px">
-                    <img
-                      src="${String(actualBooking.picture)}"
-                      style="width: 20px; height: 20px; border-radius: 50%; align-self: flex-start;"
-                    />
-                  </div>
-                  <div style="flex: 1; display: flex; align-items: center; overflow: hidden; text-overflow: ellipsis;">
-                    <span style="white-space: collapse; overflow: hidden; text-overflow: ellipsis;">
-                      ${nameText}
-                    </span>
-                  </div>
-                </div>`
-                : `<div style="display: flex; align-items: center">
-                  <span>${nameText}</span>
-                </div>`;
-              args.data.html = avatarHtml;
-            }
-
-            if (eventStart <= now && now < eventEnd) {
-              args.data.backColor = '#e6fff2';
-              args.data.text = `${args.data.text} - ${t('bookings.ongoing')}`;
-            }
-
-            if (args.data.text !== user?.roomNumber) {
-              args.data.backColor = '#eaeaea';
-            }
-          }}
-        />
       </Card>
-      {selectedEvent && (
-        <BookingModal
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
-          selectedEvent={selectedEvent}
-          onDelete={(id) => deleteEvent(id)}
-        />
-      )}
 
-      <BookingCreateDialog
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        sharedSpace={sharedSpace}
-        startDate={startDateSelection}
-        bookingTimeHours={bookingTimeHours}
-        onCreateBooking={createBookingApiCall}
-      />
+      <Suspense fallback={<ClipLoader color="#007bff" size={50} />}>
+        {modalOpen && selectedEvent && (
+          <BookingModal
+            open={modalOpen}
+            onClose={() => setModalOpen(false)}
+            selectedEvent={selectedEvent}
+            onDelete={(id) => deleteEvent(id)}
+          />
+        )}
+        {dialogOpen && (
+          <BookingCreateDialog
+            open={dialogOpen}
+            onClose={() => setDialogOpen(false)}
+            sharedSpace={sharedSpace}
+            startDate={startDateSelection}
+            bookingTimeHours={bookingTimeHours}
+            onCreateBooking={createBookingApiCall}
+          />
+        )}
+      </Suspense>
     </Box>
   );
 };

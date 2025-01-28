@@ -7,7 +7,6 @@ import React, {
   useCallback,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'react-toastify';
 import axiosInstance from 'src/settings/axiosInstance';
 
 export interface User {
@@ -27,7 +26,6 @@ interface LoginResponse {
 interface UserContextType {
   isAuthenticated: boolean;
   user: User | null;
-  checkSession: () => Promise<void>;
   login: (roomNumber: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (username: string) => Promise<void>;
@@ -37,9 +35,12 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+const loadToast = async () => {
+  const { toast } = await import('react-toastify');
+  return toast;
+};
+
+const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { t } = useTranslation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
@@ -48,19 +49,27 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     try {
       const response = await axiosInstance.post<LoginResponse>(
         '/user/login',
-        { roomNumber, password },
-        { withCredentials: true }
+        {
+          roomNumber,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
       );
+
       if (response.data.status) {
         const { username, roomNumber, email, isAdmin, profilePicture } =
           response.data.user;
         setUser({ username, roomNumber, email, isAdmin, profilePicture });
         setIsAuthenticated(true);
+        const toast = await loadToast();
         toast.success(t('login.success'));
       } else {
         throw new Error(response.data.message);
       }
     } catch (error) {
+      const toast = await loadToast();
       toast.error(t('login.failed'));
     }
   };
@@ -70,8 +79,10 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
       await axiosInstance.post('/user/logout', {}, { withCredentials: true });
       setIsAuthenticated(false);
       setUser(null);
+      const toast = await loadToast();
       toast.info(t('logout.success'));
     } catch (error) {
+      const toast = await loadToast();
       toast.error(t('logout.failed'));
     }
   };
@@ -90,6 +101,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         setUser(null);
       }
     } catch (error) {
+      const toast = await loadToast();
       toast.error(t('session.failed'));
       setIsAuthenticated(false);
       setUser(null);
@@ -98,6 +110,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 
   const updateUser = async (username: string) => {
     if (!username) {
+      const toast = await loadToast();
       toast.error(t('update.noFields'));
       return;
     }
@@ -108,10 +121,11 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         { username },
         { withCredentials: true }
       );
-
       setUser((prevUser) => ({ ...prevUser!, username }));
+      const toast = await loadToast();
       toast.success(t('update.success'));
     } catch {
+      const toast = await loadToast();
       toast.error(t('update.failed'));
     }
   };
@@ -139,11 +153,12 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
           ...prevUser!,
           profilePicture: response.data.profilePicture,
         }));
+        const toast = await loadToast();
         toast.success(t('update.success'));
       }
     } catch (error) {
+      const toast = await loadToast();
       toast.error(t('update.failed'));
-      console.error('Error updating profile picture:', error);
     }
   };
 
@@ -162,24 +177,24 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
           ...prevUser!,
           profilePicture: undefined,
         }));
+        const toast = await loadToast();
         toast.success(t('update.success'));
       }
     } catch (error) {
+      const toast = await loadToast();
       toast.error(t('update.failed'));
-      console.error('Error delete profile picture:', error);
     }
   };
 
   useEffect(() => {
     checkSession();
-  }, [checkSession]);
+  }, []);
 
   return (
     <UserContext.Provider
       value={{
         isAuthenticated,
         user,
-        checkSession,
         login,
         logout,
         updateUser,
@@ -199,3 +214,5 @@ export const useUser = (): UserContextType => {
   }
   return context;
 };
+
+export default UserProvider;

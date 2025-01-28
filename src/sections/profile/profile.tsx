@@ -12,7 +12,11 @@ import {
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 
-export function Profile() {
+const Profile: React.FC = () => {
+  return <ProfileView />;
+};
+
+export function ProfileView() {
   const { user, updateUser, updateUserPicture, removeUserPicture } = useUser();
   const { t } = useTranslation();
 
@@ -22,6 +26,17 @@ export function Profile() {
   );
 
   const MAX_FILE_SIZE_MB = 2;
+
+  const validateFile = (file: File): string | undefined => {
+    const fileSizeInMB = file.size / 1024 / 1024;
+    if (!file.type.startsWith('image/')) {
+      return t('file.invalid.format');
+    }
+    if (fileSizeInMB > MAX_FILE_SIZE_MB) {
+      return t('file.size.exceeds', { size: MAX_FILE_SIZE_MB });
+    }
+    return undefined;
+  };
 
   const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
@@ -34,18 +49,10 @@ export function Profile() {
 
   const handleProfilePictureChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-
     if (file) {
-      const fileSizeInMB = file.size / 1024 / 1024;
-      const isImage = file.type.startsWith('image/');
-
-      if (!isImage) {
-        toast.error(t('file.invalid.format'));
-        return;
-      }
-
-      if (fileSizeInMB > MAX_FILE_SIZE_MB) {
-        toast.error(t('file.size.exceeds', { size: MAX_FILE_SIZE_MB }));
+      const validationError = validateFile(file);
+      if (validationError) {
+        toast.error(validationError);
         return;
       }
 
@@ -61,9 +68,8 @@ export function Profile() {
 
   const handleProfilePictureDelete = () => {
     const confirmed = window.confirm(t('profile.picture.confirmDelete'));
-    if (!confirmed) {
-      return;
-    }
+    if (!confirmed) return;
+
     removeUserPicture();
     setProfilePicture(undefined);
   };
@@ -77,22 +83,22 @@ export function Profile() {
     await updateUser(username.trim());
   };
 
+  const avatar = profilePicture ? (
+    <Avatar src={String(profilePicture)} sx={{ width: 100, height: 100 }} />
+  ) : (
+    <Avatar sx={{ width: 100, height: 100 }}>
+      {user?.username?.charAt(0).toUpperCase()}
+    </Avatar>
+  );
+
   return (
     <DashboardContent>
       <Box display="flex" flexDirection="column" alignItems="center" gap={3}>
         <Typography variant="h4">{t('profile')}</Typography>
 
         <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
-          {profilePicture ? (
-            <Avatar
-              src={String(profilePicture)}
-              sx={{ width: 100, height: 100 }}
-            />
-          ) : (
-            <Avatar sx={{ width: 100, height: 100 }}>
-              {user?.username?.charAt(0).toUpperCase()}
-            </Avatar>
-          )}
+          {avatar}
+
           <Button variant="outlined" color="info" component="label">
             {t('profile.change.picture')}
             <input
@@ -100,13 +106,15 @@ export function Profile() {
               accept="image/*"
               hidden
               onChange={handleProfilePictureChange}
+              aria-label={t('profile.upload.picture')}
             />
           </Button>
+
           {profilePicture !== undefined && (
             <Button
               variant="outlined"
-              component="label"
               onClick={handleProfilePictureDelete}
+              aria-label={t('profile.delete.picture')}
             >
               {t('profile.delete.picture')}
             </Button>
@@ -129,7 +137,7 @@ export function Profile() {
           disabled={true}
         />
 
-        <Divider />
+        <Divider sx={{ width: '100%' }} />
 
         <TextField
           label={t('username')}
@@ -142,6 +150,7 @@ export function Profile() {
               ? t('profile.username.validationMessage')
               : ''
           }
+          aria-label={t('profile.username')}
         />
 
         <Button
@@ -149,6 +158,7 @@ export function Profile() {
           color="primary"
           onClick={handleSave}
           disabled={!validateUsername(username)}
+          aria-label={t('profile.save.changes')}
         >
           {t('profile.save.changes')}
         </Button>
@@ -156,3 +166,5 @@ export function Profile() {
     </DashboardContent>
   );
 }
+
+export default Profile;

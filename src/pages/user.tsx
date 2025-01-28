@@ -1,7 +1,9 @@
 import { Helmet } from 'react-helmet-async';
 import { CONFIG } from '../config-global';
-import { UserView } from '../sections/user/view';
 import { useTranslation } from 'react-i18next';
+import { Suspense, lazy } from 'react';
+
+const UserViewLazy = lazy(() => import('../sections/user/view/user-view'));
 
 export default function Page() {
   const { t } = useTranslation();
@@ -9,10 +11,20 @@ export default function Page() {
   return (
     <>
       <Helmet>
-        <title> {`${t('users')} - ${CONFIG.appName}`}</title>
+        <title>{`${t('users')} - ${CONFIG.appName}`}</title>
+        <meta
+          name="description"
+          content={`${t('users')} - ${CONFIG.appName}`}
+        />
+        <meta
+          property="og:title"
+          content={`${t('users')} - ${CONFIG.appName}`}
+        />
       </Helmet>
 
-      <UserView />
+      <Suspense fallback={<div>Loading...</div>}>
+        <UserViewLazy />
+      </Suspense>
     </>
   );
 }

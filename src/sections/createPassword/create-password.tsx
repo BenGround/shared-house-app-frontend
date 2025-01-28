@@ -1,23 +1,24 @@
-import { useState, useCallback } from 'react';
+import { lazy, Suspense, useState, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
-
 import { useRouter } from 'src/routes/hooks';
-import { Iconify } from 'src/components/iconify';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import axiosInstance from 'src/settings/axiosInstance';
 import { toast } from 'react-toastify';
+import { Iconify } from 'src/components/iconify';
+import { IconButton } from '@mui/material';
 
-const SignIn: React.FC = () => {
-  return <CreatePassword />;
+const LoadingButton = lazy(() => import('@mui/lab/LoadingButton'));
+const renderFallback = <div>Loading...</div>;
+
+const CreatePassword: React.FC = () => {
+  return <CreatePasswordView />;
 };
 
-export function CreatePassword() {
+export function CreatePasswordView() {
   const { t } = useTranslation();
   const router = useRouter();
   const location = useLocation();
@@ -35,7 +36,7 @@ export function CreatePassword() {
       e.preventDefault();
 
       if (password !== confirmPassword) {
-        setError(t('password.mismatch')); // Error message if passwords don't match
+        setError(t('password.mismatch'));
         return;
       }
 
@@ -139,19 +140,21 @@ export function CreatePassword() {
             </Typography>
           )}
 
-          <LoadingButton
-            fullWidth
-            size="large"
-            type="submit"
-            color="inherit"
-            variant="contained"
-          >
-            {t('create.password')}
-          </LoadingButton>
+          <Suspense fallback={renderFallback}>
+            <LoadingButton
+              fullWidth
+              size="large"
+              type="submit"
+              color="inherit"
+              variant="contained"
+            >
+              {t('create.password')}
+            </LoadingButton>
+          </Suspense>
         </Box>
       </form>
     </>
   );
 }
 
-export default SignIn;
+export default CreatePassword;

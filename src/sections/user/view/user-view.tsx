@@ -23,6 +23,10 @@ import { emptyRows, applyFilter, getComparator } from '../utils';
 
 import type { UserProps } from '../user-table-row';
 
+const User: React.FC = () => {
+  return <UserView />;
+};
+
 export function UserView() {
   const _users: any[] = [];
   const table = useTable();
@@ -198,3 +202,5 @@ export function useTable() {
     onChangeRowsPerPage,
   };
 }
+
+export default User;
