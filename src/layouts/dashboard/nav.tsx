@@ -109,9 +109,14 @@ export function NavContent({ data, onNavItemClick }: NavContentProps) {
             sx={{ paddingInlineStart: 0 }}
           >
             <img
-              src="/assets/logo.svg"
-              alt="My Icon"
-              style={{ width: 200, height: 100, margin: 'auto' }}
+              src="https://www.oakhouse.jp/assets/img/logo.png"
+              alt="logo"
+              style={{
+                width: 200,
+                margin: 'auto',
+                paddingTop: 30,
+                paddingBottom: 30,
+              }}
             />
             <Divider />
             {data.map((item) => {

@@ -10,6 +10,7 @@ import { DayPilot } from '@daypilot/daypilot-lite-react';
 import { toast } from 'react-toastify';
 import axiosInstance from 'src/settings/axiosInstance';
 import { Booking } from 'src/types/booking';
+import { _shareSpacesImg, ShareSpaceKeys } from 'src/data';
 
 const BookingModal = React.lazy(() => import('./bookingModal'));
 const BookingCreateDialog = React.lazy(() => import('./bookingCreateDialog'));
@@ -223,7 +224,9 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ sharedSpace }) => {
         <Box
           sx={{
             width: '100%',
-            backgroundImage: `url('/assets/sharedSpaces/${sharedSpace.nameCode}.jpg')`,
+            backgroundImage: `url(${
+              _shareSpacesImg[sharedSpace.nameCode as ShareSpaceKeys]
+            })`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             borderRadius: '0.5rem',

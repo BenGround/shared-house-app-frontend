@@ -2,7 +2,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 import webpack from 'webpack';
 
@@ -31,14 +30,6 @@ export default {
     new HtmlWebpackPlugin({
       template: './public/index.html',
     }),
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: path.resolve(__dirname, 'public/assets'),
-          to: path.resolve(__dirname, 'dist/assets'),
-        },
-      ],
-    }),
   ],
   resolve: {
     alias: {
@@ -60,14 +51,6 @@ export default {
       {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
-      },
-      {
-        test: /\.(png|jpe?g|gif|svg)$/i,
-        type: 'asset/resource',
-        use: ['image-webpack-loader'],
-        generator: {
-          filename: 'assets/[name].[hash][ext][query]',
-        },
       },
     ],
   },

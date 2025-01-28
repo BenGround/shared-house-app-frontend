@@ -35,7 +35,7 @@ export const Main: React.FC = () => {
         sx={{
           width: '100%',
           height: { xs: 350, md: 495 },
-          backgroundImage: `url('/assets/home.jpg')`,
+          backgroundImage: `url('https://i.imgur.com/wmFWM7L.jpeg')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           borderRadius: '0.5rem',
