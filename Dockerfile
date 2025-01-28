@@ -10,4 +10,4 @@ COPY . .
 
 COPY .env ./.env
 
-RUN npm run build
+RUN node --max-old-space-size=8192 npm run build
