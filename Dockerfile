@@ -2,6 +2,7 @@ FROM node:23.5 as build
 
 WORKDIR /app
 
+ENV NODE_OPTIONS=--max_old_space_size=2048
 COPY package*.json ./
 
 RUN npm install
@@ -10,4 +11,4 @@ COPY . .
 
 COPY .env ./.env
 
-RUN node --max-old-space-size=8192 npm run build
+RUN npm run build
