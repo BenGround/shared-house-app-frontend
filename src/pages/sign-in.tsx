@@ -22,7 +22,7 @@ export default function Page() {
         />
       </Helmet>
 
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense>
         <SignInView />
       </Suspense>
     </>

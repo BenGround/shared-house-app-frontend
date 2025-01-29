@@ -24,6 +24,7 @@ interface LoginResponse {
 }
 
 interface UserContextType {
+  authCallDone: boolean;
   isAuthenticated: boolean;
   user: User | null;
   login: (roomNumber: string, password: string) => Promise<void>;
@@ -42,6 +43,7 @@ const loadToast = async () => {
 
 const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { t } = useTranslation();
+  const [authCallDone, setAuthCallDone] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
@@ -68,6 +70,8 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       } else {
         throw new Error(response.data.message);
       }
+
+      setAuthCallDone(true);
     } catch (error) {
       const toast = await loadToast();
       toast.error(t('login.failed'));
@@ -105,6 +109,8 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       toast.error(t('session.failed'));
       setIsAuthenticated(false);
       setUser(null);
+    } finally {
+      setAuthCallDone(true);
     }
   }, [t]);
 
@@ -193,6 +199,7 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <UserContext.Provider
       value={{
+        authCallDone,
         isAuthenticated,
         user,
         login,

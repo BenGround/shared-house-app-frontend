@@ -12,7 +12,6 @@ import { Iconify } from 'src/components/iconify';
 import { IconButton } from '@mui/material';
 
 const LoadingButton = lazy(() => import('@mui/lab/LoadingButton'));
-const renderFallback = <div>Loading...</div>;
 
 const CreatePassword: React.FC = () => {
   return <CreatePasswordView />;
@@ -140,7 +139,7 @@ export function CreatePasswordView() {
             </Typography>
           )}
 
-          <Suspense fallback={renderFallback}>
+          <Suspense>
             <LoadingButton
               fullWidth
               size="large"

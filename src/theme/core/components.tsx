@@ -59,6 +59,15 @@ const MuiCardHeader: Components<Theme>['MuiCardHeader'] = {
 
 const MuiOutlinedInput: Components<Theme>['MuiOutlinedInput'] = {
   styleOverrides: {
+    root: ({ theme }) => ({
+      input: {
+        '&:-webkit-autofill': {
+          WebkitBoxShadow: `0 0 0 100px ${theme.vars.palette.grey['50Channel']} inset`,
+          WebkitTextFillColor: theme.vars.palette.grey['500Channel'],
+          transition: 'background-color 5000s ease-in-out 0s',
+        },
+      },
+    }),
     notchedOutline: ({ theme }) => ({
       borderColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.2),
     }),

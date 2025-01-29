@@ -1,12 +1,11 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
-import Box from '@mui/material/Box';
 import { AuthLayout } from '../layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
 import ProtectedRoute from './protectedRoute';
 import { useShareSpaces } from 'src/contexts/shareSpacesContext';
-import { ClipLoader } from 'react-spinners';
 import { useUser } from 'src/contexts/userContext';
+import LoadingSpinner from 'src/components/loadingSpinner/loadingSpinner';
 
 export const HomePage = lazy(() => import('../pages/home'));
 export const BookingsPage = lazy(() => import('../pages/bookings'));
@@ -19,11 +18,7 @@ export const BookingCalendar = lazy(
 export const CreatePassword = lazy(() => import('../pages/create-password'));
 export const ProfilePage = lazy(() => import('../pages/profile'));
 
-const renderFallback = (
-  <Box sx={{ textAlign: 'center', marginTop: '25vh' }}>
-    <ClipLoader color="#007bff" size={50} />
-  </Box>
-);
+const renderFallback = <LoadingSpinner translationKey="loading.routes" />;
 
 function Router() {
   const { isAuthenticated } = useUser();

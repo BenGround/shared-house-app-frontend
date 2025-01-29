@@ -12,11 +12,10 @@ import { useLocation } from 'react-router-dom';
 import { Iconify } from 'src/components/iconify';
 
 const LoadingButton = lazy(() => import('@mui/lab/LoadingButton'));
-const renderFallback = <div>Loading...</div>;
 
 const SignIn: React.FC = () => {
   return (
-    <Suspense fallback={renderFallback}>
+    <Suspense>
       <SignInView />
     </Suspense>
   );
@@ -35,13 +34,24 @@ export function SignInView() {
   );
   const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSignIn = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      await login(roomNumber, password);
+
+      if (loading) return;
+      setLoading(true);
+
+      try {
+        await login(roomNumber, password);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     },
-    [roomNumber, password, router, login]
+    [roomNumber, password, login, loading]
   );
 
   useEffect(() => {
@@ -106,13 +116,15 @@ export function SignInView() {
             required
           />
 
-          <Suspense fallback={renderFallback}>
+          <Suspense>
             <LoadingButton
               fullWidth
               size="large"
               type="submit"
               color="inherit"
               variant="contained"
+              loading={loading}
+              disabled={loading}
             >
               {t('signin')}
             </LoadingButton>
