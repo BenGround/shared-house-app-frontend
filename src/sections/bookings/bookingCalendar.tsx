@@ -382,9 +382,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
     }
   }, [eventCache, startDate]);
   useEffect(() => {
-    const backendUrl =
-      process.env.REACT_APP_API_URL ||
-      'https://api.social-residence-shakujiikoen.online';
+    const backendUrl = 'https://social-residence-shakujiikoen.online/ws';
     if (!sharedSpace || !backendUrl) return;
     socket.current = io(backendUrl, {
       withCredentials: true,
