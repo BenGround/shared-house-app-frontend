@@ -1,6 +1,6 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
 import { Box, Tab, Tabs, Typography } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useShareSpaces } from 'src/contexts/shareSpacesContext';
@@ -18,13 +18,18 @@ const BookingCalendars: React.FC<BookingCalendarsProps> = ({
   const { sharedSpaces, error } = useShareSpaces();
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
+
   if (error) {
     return <div>{error}</div>;
   }
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    if (loading) return;
+
     const selectedSpace = sharedSpaces[newValue];
     if (selectedSpace) {
+      setLoading(true);
       navigate(`/bookings/${selectedSpace.nameCode}`);
     }
   };
@@ -45,7 +50,7 @@ const BookingCalendars: React.FC<BookingCalendarsProps> = ({
             onChange={handleTabChange}
             aria-label="shared space booking tabs"
           >
-            {sharedSpaces.map((space, index) => (
+            {sharedSpaces.map((space) => (
               <Tab
                 key={space.id}
                 label={t(space.nameCode)}
@@ -53,19 +58,20 @@ const BookingCalendars: React.FC<BookingCalendarsProps> = ({
                   textTransform: 'capitalize',
                   textShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)',
                 }}
-                component={Link}
-                to={`/bookings/${space.nameCode}`}
               />
             ))}
           </Tabs>
         </Box>
 
-        <Box sx={{ p: 1 }}>
+        <Box sx={{ paddingTop: 1 }}>
           {shareSpace ? (
-            <Suspense
-              fallback={<Typography variant="h6">{t('loading')}...</Typography>}
-            >
-              <BookingCalendar sharedSpace={shareSpace} />
+            <Suspense>
+              <BookingCalendar
+                sharedSpace={shareSpace}
+                isFetching={(fetching) => {
+                  setLoading(fetching);
+                }}
+              />
             </Suspense>
           ) : (
             <Typography variant="h5">

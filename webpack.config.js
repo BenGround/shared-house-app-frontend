@@ -61,11 +61,6 @@ export default {
     historyApiFallback: true,
     hot: true,
   },
-  performance: {
-    maxAssetSize: 500000,
-    maxEntrypointSize: 1000000,
-    hints: 'warning',
-  },
   optimization: {
     minimize: true,
     minimizer: [

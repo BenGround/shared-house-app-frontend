@@ -5,4 +5,5 @@ export interface Booking {
   username: string;
   roomNumber: string;
   picture: string;
+  sharedSpaceId: number;
 }
