@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import { LoadingButton } from '@mui/lab';
 
 const Profile: React.FC = () => {
   return <ProfileView />;
@@ -24,6 +25,9 @@ export function ProfileView() {
   const [profilePicture, setProfilePicture] = useState<string | undefined>(
     user?.profilePicture || undefined
   );
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [disabledImgButttons, setDisabledImgButttons] =
+    useState<boolean>(false);
 
   const MAX_FILE_SIZE_MB = 2;
 
@@ -47,7 +51,9 @@ export function ProfileView() {
     return usernameRegex.test(username);
   };
 
-  const handleProfilePictureChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleProfilePictureChange = async (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       const validationError = validateFile(file);
@@ -56,7 +62,9 @@ export function ProfileView() {
         return;
       }
 
-      updateUserPicture(file);
+      setDisabledImgButttons(true);
+      await updateUserPicture(file);
+      setDisabledImgButttons(false);
 
       const reader = new FileReader();
       reader.onload = () => setProfilePicture(reader.result as string);
@@ -66,21 +74,28 @@ export function ProfileView() {
     }
   };
 
-  const handleProfilePictureDelete = () => {
+  const handleProfilePictureDelete = async () => {
     const confirmed = window.confirm(t('profile.picture.confirmDelete'));
     if (!confirmed) return;
 
-    removeUserPicture();
+    setDisabledImgButttons(true);
+    await removeUserPicture();
+    setDisabledImgButttons(false);
     setProfilePicture(undefined);
   };
 
   const handleSave = async () => {
+    if (isLoading) return;
     if (!validateUsername(username)) {
       toast.error(t('profile.username.invalid'));
       return;
     }
 
-    await updateUser(username.trim());
+    const trimUsername = username.trim();
+    setIsLoading(true);
+    setUsername(trimUsername);
+    await updateUser(trimUsername);
+    setIsLoading(false);
   };
 
   const avatar = profilePicture ? (
@@ -99,7 +114,12 @@ export function ProfileView() {
         <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
           {avatar}
 
-          <Button variant="outlined" color="info" component="label">
+          <Button
+            variant="outlined"
+            color="info"
+            component="label"
+            disabled={disabledImgButttons}
+          >
             {t('profile.change.picture')}
             <input
               type="file"
@@ -115,6 +135,7 @@ export function ProfileView() {
               variant="outlined"
               onClick={handleProfilePictureDelete}
               aria-label={t('profile.delete.picture')}
+              disabled={disabledImgButttons}
             >
               {t('profile.delete.picture')}
             </Button>
@@ -153,15 +174,20 @@ export function ProfileView() {
           aria-label={t('profile.username')}
         />
 
-        <Button
+        <LoadingButton
           variant="contained"
           color="primary"
           onClick={handleSave}
-          disabled={!validateUsername(username)}
+          disabled={
+            !validateUsername(username) ||
+            isLoading ||
+            username === user?.username
+          }
           aria-label={t('profile.save.changes')}
+          loading={isLoading}
         >
           {t('profile.save.changes')}
-        </Button>
+        </LoadingButton>
       </Box>
     </DashboardContent>
   );

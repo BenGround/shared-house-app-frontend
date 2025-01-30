@@ -89,5 +89,10 @@
 	"update.failed": "Update failed",
 	"update.success": "Update success",
 	"loading.element": "Loading component",
-	"loading.routes": "Loading routes"
+	"loading.routes": "Loading routes",
+	"password.validation.eight.characters": "At least 8 characters",
+	"password.validation.uppercase.letter": "At least one uppercase letter",
+	"password.validation.lowercase.letter": "At least one lowercase letter",
+	"password.validation.one.number": "At least one number",
+	"password.validation.one.special": "At least one special character"
 }

@@ -42,11 +42,11 @@ export function LanguagePopover({
 
   const handleChangeLang = useCallback(
     (newLang: string) => {
-      i18n.changeLanguage(newLang); // Moved `changeLanguage` logic here directly
+      i18n.changeLanguage(newLang);
       handleClosePopover();
       toast.success(t('language.changed'));
     },
-    [i18n, handleClosePopover, t] // Added `i18n` and `t` as dependencies
+    [i18n, handleClosePopover, t]
   );
 
   let currentLang = data.find((lang) => lang.value === i18n.language);

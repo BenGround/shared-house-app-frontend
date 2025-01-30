@@ -572,15 +572,15 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
                     : actualBooking.roomNumber;
 
                   const avatarHtml = actualBooking.picture
-                    ? `<div style="display: flex; align-items: flex-start; margin: 2px 10px 10px 3px">
-                        <div style="display: flex; flex-direction: column; align-items: center; margin-right: 5px">
+                    ? `<div style="display: flex; align-items: flex-start; position: relative; padding-right: 20px; height: 10%">
+                        <div style="position: absolute; top: 0; right: 0; margin: 3px;">
                           <img
                             src="${String(actualBooking.picture)}"
-                            style="width: 20px; height: 20px; border-radius: 50%; align-self: flex-start;"
+                            style="width: 20px; height: 20px; border-radius: 50%;"
                           />
                         </div>
-                        <div style="flex: 1; display: flex; align-items: center; overflow: hidden; text-overflow: ellipsis;">
-                          <span style="white-space: collapse; overflow: hidden; text-overflow: ellipsis;">
+                        <div style="flex: 1; display: flex; flex-direction: column; padding-top: 2px">
+                          <span style="white-space: normal; overflow: hidden; text-overflow: ellipsis; word-wrap: break-word;">
                             ${nameText}
                           </span>
                         </div>

@@ -70,8 +70,6 @@ export const Label = forwardRef<HTMLSpanElement, LabelProps>(
   }
 );
 
-// ----------------------------------------------------------------------
-
 function sentenceCase(string: string): string {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }

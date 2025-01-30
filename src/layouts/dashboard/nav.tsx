@@ -127,7 +127,7 @@ export function NavContent({ data, onNavItemClick }: NavContentProps) {
                     disableGutters
                     component={RouterLink}
                     href={item.path}
-                    onClick={onNavItemClick} // This will work if onNavItemClick is passed, else it will be ignored
+                    onClick={onNavItemClick}
                     sx={{
                       pl: 2,
                       py: 1,

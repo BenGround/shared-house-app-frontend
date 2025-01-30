@@ -6,7 +6,7 @@
       "dom.iterable",
       "esnext"
     ],
-    "noEmit": false,    // Ensure this is false
+    "noEmit": false,
     "outDir": "./dist",
     "baseUrl": "./src",
     "paths": {
@@ -28,5 +28,5 @@
     "types": ["node", "body-parser", "express", "http-errors", "graceful-fs", "http-proxy", "range-parser", "resolve", "send", "serve-index", "serve-static", "trusted-types"]
   },
   "exclude": ["node_modules", "build"],
-  "include": ["src/**/*"]  // Make sure this includes your src files
+  "include": ["src/**/*"] 
 }

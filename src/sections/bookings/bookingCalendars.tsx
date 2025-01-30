@@ -1,9 +1,11 @@
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useState, useRef, useEffect } from 'react';
 import { Box, Tab, Tabs, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useShareSpaces } from 'src/contexts/shareSpacesContext';
+import { CSSTransition } from 'react-transition-group';
+import 'src/css/transition.css';
 
 const BookingCalendar = React.lazy(() => import('./bookingCalendar'));
 
@@ -19,6 +21,18 @@ const BookingCalendars: React.FC<BookingCalendarsProps> = ({
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
+  const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
+
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (sharedSpaceNameCode) {
+      const initialTabIndex = sharedSpaces.findIndex(
+        (space) => space.nameCode === sharedSpaceNameCode
+      );
+      setSelectedTabIndex(initialTabIndex >= 0 ? initialTabIndex : 0);
+    }
+  }, [sharedSpaceNameCode, sharedSpaces]);
 
   if (error) {
     return <div>{error}</div>;
@@ -27,6 +41,7 @@ const BookingCalendars: React.FC<BookingCalendarsProps> = ({
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     if (loading) return;
 
+    setSelectedTabIndex(newValue);
     const selectedSpace = sharedSpaces[newValue];
     if (selectedSpace) {
       setLoading(true);
@@ -46,7 +61,7 @@ const BookingCalendars: React.FC<BookingCalendarsProps> = ({
       <Box sx={{ width: '100%' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs
-            value={currentIndex >= 0 ? currentIndex : 0}
+            value={selectedTabIndex >= 0 ? selectedTabIndex : 0}
             onChange={handleTabChange}
             aria-label="shared space booking tabs"
           >
@@ -64,20 +79,30 @@ const BookingCalendars: React.FC<BookingCalendarsProps> = ({
         </Box>
 
         <Box sx={{ paddingTop: 1 }}>
-          {shareSpace ? (
-            <Suspense>
-              <BookingCalendar
-                sharedSpace={shareSpace}
-                isFetching={(fetching) => {
-                  setLoading(fetching);
-                }}
-              />
-            </Suspense>
-          ) : (
-            <Typography variant="h5">
-              {t('bookings.selectSharedSpace')}
-            </Typography>
-          )}
+          <CSSTransition
+            nodeRef={ref}
+            in={selectedTabIndex === currentIndex}
+            timeout={500}
+            classNames="fade"
+            unmountOnExit
+          >
+            <div ref={ref}>
+              {shareSpace ? (
+                <Suspense>
+                  <BookingCalendar
+                    sharedSpace={shareSpace}
+                    isFetching={(fetching) => {
+                      setLoading(fetching);
+                    }}
+                  />
+                </Suspense>
+              ) : (
+                <Typography variant="h5">
+                  {t('bookings.selectSharedSpace')}
+                </Typography>
+              )}
+            </div>
+          </CSSTransition>
         </Box>
       </Box>
     </DashboardContent>

@@ -178,7 +178,7 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         }
       );
 
-      if (response.status === 200) {
+      if (response.status === 204) {
         setUser((prevUser) => ({
           ...prevUser!,
           profilePicture: undefined,
