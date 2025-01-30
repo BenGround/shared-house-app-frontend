@@ -94,6 +94,7 @@ export function SignInView() {
             type={showPassword ? 'text' : 'password'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onPaste={(e) => e.stopPropagation()}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Suspense, lazy } from 'react';
 
 const CreatePassword = lazy(
-  () => import('../sections/createPassword/create-password')
+  () => import('../sections/createPassword/createPassword')
 );
 
 export default function Page() {

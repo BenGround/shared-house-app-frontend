@@ -105,6 +105,7 @@ export function CreatePasswordView() {
           label={t('password')}
           type={showPassword ? 'text' : 'password'}
           value={password}
+          onPaste={(e) => e.stopPropagation()}
           onChange={handlePasswordChange}
           InputProps={{
             endAdornment: (
@@ -156,6 +157,7 @@ export function CreatePasswordView() {
           label={t('confirm.password')}
           type={showConfirmPassword ? 'text' : 'password'}
           value={confirmPassword}
+          onPaste={(e) => e.stopPropagation()}
           onChange={(e) => setConfirmPassword(e.target.value)}
           InputProps={{
             endAdornment: (

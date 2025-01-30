@@ -28,5 +28,5 @@
     "types": ["node", "body-parser", "express", "http-errors", "graceful-fs", "http-proxy", "range-parser", "resolve", "send", "serve-index", "serve-static", "trusted-types"]
   },
   "exclude": ["node_modules", "build"],
-  "include": ["src/**/*"] 
+  "include": ["src/**/*"]
 }

@@ -3,7 +3,7 @@ import { CONFIG } from '../config-global';
 import { useTranslation } from 'react-i18next';
 import { Suspense, lazy } from 'react';
 
-const UserViewLazy = lazy(() => import('../sections/user/view/user-view'));
+const UserViewLazy = lazy(() => import('../sections/user/view/userView'));
 
 export default function Page() {
   const { t } = useTranslation();

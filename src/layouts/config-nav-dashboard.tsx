@@ -1,5 +1,3 @@
-import { Label } from '../components/label';
-
 export const navData = [
   {
     titleCode: 'home',
@@ -12,11 +10,6 @@ export const navData = [
   {
     titleCode: 'users',
     path: '/user',
-    info: (
-      <Label color="error" variant="inverted">
-        +3
-      </Label>
-    ),
     admin: true,
   },
 ];

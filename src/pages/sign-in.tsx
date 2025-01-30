@@ -3,7 +3,7 @@ import { CONFIG } from '../config-global';
 import { Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const SignInView = lazy(() => import('../sections/auth/sign-in-view'));
+const SignInView = lazy(() => import('../sections/auth/signInView'));
 
 export default function Page() {
   const { t } = useTranslation();

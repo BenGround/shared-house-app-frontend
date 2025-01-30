@@ -116,6 +116,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
       setLoading(true);
       isCallingApi(true);
       const response = await axiosInstance.get(`bookings/${sharedSpace.id}`, {
+        withCredentials: true,
         params: {
           startDate: startDate.toString('yyyy-MM-dd'),
           endDate: endDate.toString('yyyy-MM-dd'),
