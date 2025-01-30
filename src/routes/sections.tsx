@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense } from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 import { AuthLayout } from '../layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
@@ -21,7 +21,7 @@ export const ProfilePage = lazy(() => import('../pages/profile'));
 const renderFallback = <LoadingSpinner translationKey="loading.routes" />;
 
 function Router() {
-  const { isAuthenticated } = useUser();
+  const { isAuthenticated, user } = useUser();
   const { sharedSpaces, isLoading, error, done } = useShareSpaces();
 
   const routes = useRoutes([
@@ -52,8 +52,12 @@ function Router() {
           element: <ProtectedRoute element={BookingsPage} />,
         },
         {
-          element: <ProtectedRoute element={UserPage} />,
           path: 'user',
+          element: Boolean(user?.isAdmin) ? (
+            <ProtectedRoute element={UserPage} />
+          ) : (
+            <Navigate to="/" replace />
+          ),
         },
         {
           element: <ProtectedRoute element={ProfilePage} />,

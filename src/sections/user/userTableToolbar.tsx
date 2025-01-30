@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import Tooltip from '@mui/material/Tooltip';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -6,18 +8,25 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { Iconify } from 'src/components/iconify';
+import { t } from 'i18next';
 
 type UserTableToolbarProps = {
   numSelected: number;
-  filterName: string;
-  onFilterName: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  filterRoomNumber: string;
+  onFilterRoomNumber: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onDeleteSelected: () => void;
 };
 
 export function UserTableToolbar({
   numSelected,
-  filterName,
-  onFilterName,
+  filterRoomNumber,
+  onFilterRoomNumber,
+  onDeleteSelected,
 }: UserTableToolbarProps) {
+  const handleDelete = useCallback(() => {
+    onDeleteSelected();
+  }, [onDeleteSelected]);
+
   return (
     <Toolbar
       sx={{
@@ -32,21 +41,21 @@ export function UserTableToolbar({
       }}
     >
       {numSelected > 0 ? (
-        <Typography component="div" variant="subtitle1">
-          {numSelected} selected
+        <Typography component="div" variant="subtitle1" aria-live="polite">
+          {t('table.number.selected', { numSelected })}
         </Typography>
       ) : (
         <OutlinedInput
           fullWidth
-          value={filterName}
-          onChange={onFilterName}
-          placeholder="Search user..."
+          value={filterRoomNumber}
+          onChange={onFilterRoomNumber}
+          placeholder={t('table.search.by.room.number')}
           startAdornment={
             <InputAdornment position="start">
               <Iconify
                 width={20}
                 icon="eva:search-fill"
-                sx={{ color: 'text.disabled' }}
+                sx={{ color: 'text.secondary' }}
               />
             </InputAdornment>
           }
@@ -54,16 +63,10 @@ export function UserTableToolbar({
         />
       )}
 
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
+      {numSelected > 0 && (
+        <Tooltip title={t('delete.selected')}>
+          <IconButton onClick={handleDelete} aria-label="Delete selected users">
             <Iconify icon="solar:trash-bin-trash-bold" />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <Iconify icon="ic:round-filter-list" />
           </IconButton>
         </Tooltip>
       )}

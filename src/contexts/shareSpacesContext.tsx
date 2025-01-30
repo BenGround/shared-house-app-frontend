@@ -37,7 +37,9 @@ const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsLoading(true);
 
     try {
-      const response = await axiosInstance.get('sharedspace/list');
+      const response = await axiosInstance.get('sharedspace/list', {
+        withCredentials: true,
+      });
       setSharedSpaces(response.data);
     } catch (error) {
       setError(handleError(error));

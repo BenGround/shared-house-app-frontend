@@ -1,4 +1,4 @@
-import type { UserProps } from './user-table-row';
+import type { UserProps } from './userTableRow';
 
 export const visuallyHidden = {
   border: 0,
@@ -48,14 +48,14 @@ export function getComparator<Key extends keyof any>(
 
 type ApplyFilterProps = {
   inputData: UserProps[];
-  filterName: string;
+  filterRoomNumber: string;
   comparator: (a: any, b: any) => number;
 };
 
 export function applyFilter({
   inputData,
   comparator,
-  filterName,
+  filterRoomNumber,
 }: ApplyFilterProps) {
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
 
@@ -67,9 +67,9 @@ export function applyFilter({
 
   inputData = stabilizedThis.map((el) => el[0]);
 
-  if (filterName) {
+  if (filterRoomNumber) {
     inputData = inputData.filter(
-      (user) => user.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+      (user) => String(user.roomNumber).indexOf(filterRoomNumber) !== -1
     );
   }
 
