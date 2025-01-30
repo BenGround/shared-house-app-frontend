@@ -30,8 +30,8 @@ interface UserContextType {
   login: (roomNumber: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (username: string) => Promise<void>;
-  updateUserPicture: (file: File) => Promise<void>;
-  removeUserPicture: () => Promise<void>;
+  updateUserPicture: (file: File) => Promise<boolean>;
+  removeUserPicture: () => Promise<boolean>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -136,8 +136,8 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }
   };
 
-  const updateUserPicture = async (file: File) => {
-    if (!file) return;
+  const updateUserPicture = async (file: File): Promise<boolean> => {
+    if (!file) return false;
 
     const formData = new FormData();
     formData.append('profilePicture', file);
@@ -161,14 +161,17 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         }));
         const toast = await loadToast();
         toast.success(t('update.success'));
+        return true;
       }
     } catch (error) {
       const toast = await loadToast();
       toast.error(t('update.failed'));
     }
+
+    return false;
   };
 
-  const removeUserPicture = async () => {
+  const removeUserPicture = async (): Promise<boolean> => {
     try {
       const response = await axiosInstance.put(
         '/user/delete/picture',
@@ -185,11 +188,14 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         }));
         const toast = await loadToast();
         toast.success(t('update.success'));
+        return true;
       }
     } catch (error) {
       const toast = await loadToast();
       toast.error(t('update.failed'));
     }
+
+    return false;
   };
 
   useEffect(() => {

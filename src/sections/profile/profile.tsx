@@ -63,12 +63,14 @@ export function ProfileView() {
       }
 
       setDisabledImgButttons(true);
-      await updateUserPicture(file);
-      setDisabledImgButttons(false);
+      const result = await updateUserPicture(file);
 
-      const reader = new FileReader();
-      reader.onload = () => setProfilePicture(reader.result as string);
-      reader.readAsDataURL(file);
+      if (result) {
+        const reader = new FileReader();
+        reader.onload = () => setProfilePicture(reader.result as string);
+        reader.readAsDataURL(file);
+      }
+      setDisabledImgButttons(false);
     } else {
       toast.error(t('file.not.loaded'));
     }
@@ -79,9 +81,9 @@ export function ProfileView() {
     if (!confirmed) return;
 
     setDisabledImgButttons(true);
-    await removeUserPicture();
+    const result = await removeUserPicture();
     setDisabledImgButttons(false);
-    setProfilePicture(undefined);
+    if (result) setProfilePicture(undefined);
   };
 
   const handleSave = async () => {

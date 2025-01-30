@@ -125,5 +125,8 @@
 	"user.confirmDelete": "Do you wan to delete these/this user(s)? Room number(s): {{roomNumbers}}",
 	"user.deleted.success": "User deleted successfully",
 	"user.updated.success": "User updated successfully",
-	"user.created.success": "User created successfully"
+	"user.created.success": "User created successfully",
+	"file.size.exceeds": "File is too heavy (less than 2MB only)",
+	"file.invalid.format": "File invalid format (JPG, PNG, GIF only)",
+	"file.not.loaded": "File not loaded"
 }
