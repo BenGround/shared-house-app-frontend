@@ -12,3 +12,5 @@ COPY . .
 COPY .env ./.env
 
 RUN npm run build
+
+CMD ["tail", "-f", "/dev/null"]
