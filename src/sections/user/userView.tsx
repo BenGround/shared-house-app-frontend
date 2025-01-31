@@ -10,22 +10,22 @@ import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { Iconify } from '../../../components/iconify';
+import { Iconify } from '../../components/iconify';
 
-import { TableNoData } from '../tableNoData';
-import { UserTableRow } from '../userTableRow';
-import { UserTableHead } from '../userTableHead';
-import { TableEmptyRows } from '../tableEmptyRows';
-import { UserTableToolbar } from '../userTableToolbar';
-import { emptyRows, applyFilter, getComparator } from '../utils';
+import { TableNoData } from '../../utils/table/tableNoData';
+import { UserTableRow } from './userTableRow';
+import { CustomTableHead } from '../../utils/table/tableHead';
+import { TableEmptyRows } from '../../utils/table/tableEmptyRows';
 
-import type { UserProps } from '../userTableRow';
+import type { UserProps } from './userTableRow';
 import axiosInstance from 'src/settings/axiosInstance';
 import SimpleBar from 'simplebar-react';
 import UserEditModal, { UserPropsModal } from './userModal';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { handleError } from 'src/utils/errorHandler';
+import { CustomTableToolbar } from 'src/utils/table/tableToolbar';
+import { emptyRows, getComparator } from 'src/utils/table/utils';
 
 const SimpleBarWrapper = styled.div`
   height: 100% !important;
@@ -112,6 +112,36 @@ function UserView() {
     }
   };
 
+  type ApplyFilterProps = {
+    inputData: UserProps[];
+    filterRoomNumber: string;
+    comparator: (a: any, b: any) => number;
+  };
+
+  function applyFilter({
+    inputData,
+    comparator,
+    filterRoomNumber,
+  }: ApplyFilterProps) {
+    const stabilizedThis = inputData.map((el, index) => [el, index] as const);
+
+    stabilizedThis.sort((a, b) => {
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) return order;
+      return a[1] - b[1];
+    });
+
+    inputData = stabilizedThis.map((el) => el[0]);
+
+    if (filterRoomNumber) {
+      inputData = inputData.filter(
+        (user) => String(user.roomNumber).indexOf(filterRoomNumber) !== -1
+      );
+    }
+
+    return inputData;
+  }
+
   const dataFiltered = useMemo(
     () =>
       applyFilter({
@@ -153,10 +183,10 @@ function UserView() {
       </Box>
 
       <Card>
-        <UserTableToolbar
+        <CustomTableToolbar
           numSelected={table.selected.length}
-          filterRoomNumber={filterRoomNumber}
-          onFilterRoomNumber={(event) => {
+          filter={filterRoomNumber}
+          onFilter={(event) => {
             setFilterRoomNumber(event.target.value);
             table.onResetPage();
           }}
@@ -167,7 +197,7 @@ function UserView() {
           <TableContainer sx={{ maxHeight: 500, overflow: 'auto' }}>
             <SimpleBar autoHide={true}>
               <Table sx={{ minWidth: 800 }}>
-                <UserTableHead
+                <CustomTableHead
                   order={table.order}
                   orderBy={table.orderBy}
                   rowCount={users.length}

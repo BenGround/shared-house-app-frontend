@@ -5,7 +5,7 @@ import { Suspense, lazy } from 'react';
 import { useParams } from 'react-router-dom';
 
 const BookingCalendars = lazy(
-  () => import('src/sections/bookings/bookingCalendars')
+  () => import('src/sections/booking/bookingCalendars')
 );
 
 export default function Page() {

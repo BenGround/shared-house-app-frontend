@@ -128,5 +128,21 @@
   "user.created.success": "ユーザーが正常に作成されました",
   "file.size.exceeds": "ファイルが重すぎます（2MB以下のみ）",
   "file.invalid.format": "無効なファイル形式です（JPG, PNG, GIFのみ）",
-  "file.not.loaded": "ファイルが読み込まれていません"
+  "file.not.loaded": "ファイルが読み込まれていません",
+  "sharedspaces.settings": "共有スペースの設定",
+  "sharedspaces": "共有スペース",
+  "new.sharedspace": "新しい共有スペース",
+  "sharedspace.deleted.success": "共有スペースが正常に削除されました",
+  "sharedspace.updated.success": "共有スペースが正常に更新されました",
+  "sharedspace.created.success": "共有スペースが正常に作成されました",
+  "update.sharedspace": "シェアハウスを更新",
+  "create.sharedspace": "シェアハウスを作成",
+  "sharedspace.name.code": "名前コード",
+  "sharedspace.description": "説明",
+  "sharedspace.start.day.time": "開始日時",
+  "sharedspace.end.day.time": "終了日時",
+  "sharedspace.max.booking.hours": "最大予約時間",
+  "sharedspace.max.booking.by.user": "ユーザーごとの最大予約数",
+  "sharedspace.confirmDelete": "これらの共有スペースを削除しますか？ 名前コード: {{nameCodes}}",
+  "table.search.by.name.code": "名前コードで検索..."
 }

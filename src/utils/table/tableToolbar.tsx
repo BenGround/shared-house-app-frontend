@@ -10,19 +10,19 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { Iconify } from 'src/components/iconify';
 import { t } from 'i18next';
 
-type UserTableToolbarProps = {
+type customTableToolbarProps = {
   numSelected: number;
-  filterRoomNumber: string;
-  onFilterRoomNumber: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  filter: string;
+  onFilter: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onDeleteSelected: () => void;
 };
 
-export function UserTableToolbar({
+export function CustomTableToolbar({
   numSelected,
-  filterRoomNumber,
-  onFilterRoomNumber,
+  filter,
+  onFilter,
   onDeleteSelected,
-}: UserTableToolbarProps) {
+}: customTableToolbarProps) {
   const handleDelete = useCallback(() => {
     onDeleteSelected();
   }, [onDeleteSelected]);
@@ -47,9 +47,9 @@ export function UserTableToolbar({
       ) : (
         <OutlinedInput
           fullWidth
-          value={filterRoomNumber}
-          onChange={onFilterRoomNumber}
-          placeholder={t('table.search.by.room.number')}
+          value={filter}
+          onChange={onFilter}
+          placeholder={t('table.search.by.name.code')}
           startAdornment={
             <InputAdornment position="start">
               <Iconify
@@ -65,7 +65,10 @@ export function UserTableToolbar({
 
       {numSelected > 0 && (
         <Tooltip title={t('delete.selected')}>
-          <IconButton onClick={handleDelete} aria-label="Delete selected users">
+          <IconButton
+            onClick={handleDelete}
+            aria-label="Delete selected elements"
+          >
             <Iconify icon="solar:trash-bin-trash-bold" />
           </IconButton>
         </Tooltip>

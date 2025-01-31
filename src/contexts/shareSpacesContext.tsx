@@ -4,6 +4,7 @@ import { SharedSpace } from 'src/types/sharedSpace';
 import { handleError } from 'src/utils/errorHandler';
 
 interface ShareSpacesContextType {
+  updateSharedSpaces(shareSpaces: SharedSpace[]): void;
   sharedSpaces: SharedSpace[];
   isLoading: boolean;
   error: string | null;
@@ -29,6 +30,9 @@ const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<boolean>(false);
+
+  const updateSharedSpaces = (sharedSpaces: SharedSpace[]) =>
+    setSharedSpaces(sharedSpaces);
 
   const fetchShareSpaces = async () => {
     if (isLoading) {
@@ -56,6 +60,7 @@ const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <ShareSpacesContext.Provider
       value={{
+        updateSharedSpaces,
         sharedSpaces,
         isLoading,
         error,

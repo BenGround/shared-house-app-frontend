@@ -12,4 +12,9 @@ export const navData = [
     path: '/user',
     admin: true,
   },
+  {
+    titleCode: 'sharedspaces.settings',
+    path: '/sharedspace',
+    admin: true,
+  },
 ];

@@ -10,7 +10,7 @@ import {
   FormControlLabel,
   Divider,
 } from '@mui/material';
-import { UserProps } from '../userTableRow';
+import { UserProps } from './userTableRow';
 import axiosInstance from 'src/settings/axiosInstance';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';

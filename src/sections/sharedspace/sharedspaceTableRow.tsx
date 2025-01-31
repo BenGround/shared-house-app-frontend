@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
@@ -11,36 +10,24 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 
 import { Iconify } from 'src/components/iconify';
-import { Label } from 'src/components/label';
-import axiosInstance from 'src/settings/axiosInstance';
-import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
+import { SharedSpace } from 'src/types/sharedSpace';
 
-export type UserProps = {
-  id: string;
-  username: string;
-  roomNumber: number;
-  email: string;
-  isAdmin: boolean;
-  isSet: boolean;
-  profilePicture: string;
-};
-
-type UserTableRowProps = {
-  row: UserProps;
+type SharespaceTableRowProps = {
+  row: SharedSpace;
   selected: boolean;
   onSelectRow: () => void;
-  onEditRow: (user: UserProps) => void;
-  onDeleteRow: (roomNumber: number) => void;
+  onEditRow: (sharedSpace: SharedSpace) => void;
+  onDeleteRow: (nameCode: string) => void;
 };
 
-export function UserTableRow({
+export function SharedspaceTableRow({
   row,
   selected,
   onSelectRow,
   onEditRow,
   onDeleteRow,
-}: UserTableRowProps) {
+}: SharespaceTableRowProps) {
   const { t } = useTranslation();
   const [popoverAnchor, setPopoverAnchor] = useState<HTMLButtonElement | null>(
     null
@@ -58,20 +45,9 @@ export function UserTableRow({
     onEditRow(row);
   };
 
-  const handleSendEmailPassword = () => {
-    setPopoverAnchor(null);
-    if (!row.email) {
-      toast.warning('user.email.not.set');
-      return;
-    }
-    axiosInstance.get(`admin/sendPasswordEmail/${row.id}`, {
-      withCredentials: true,
-    });
-  };
-
   const handleDelete = () => {
     setPopoverAnchor(null);
-    onDeleteRow(row.roomNumber);
+    onDeleteRow(row.nameCode);
   };
 
   return (
@@ -82,35 +58,20 @@ export function UserTableRow({
         </TableCell>
 
         <TableCell component="th" scope="row">
-          {row.roomNumber}
-        </TableCell>
-
-        <TableCell>
           <Box display="flex" alignItems="center" gap={2}>
-            <Avatar alt={row.username} src={row.profilePicture} />
-            {row.username}
+            {row.nameCode}
           </Box>
         </TableCell>
 
-        <TableCell>{row.email}</TableCell>
+        <TableCell>{row.description}</TableCell>
 
-        <TableCell>
-          <Label color={row.isSet ? 'success' : 'error'}>
-            {row.isSet ? t('active') : t('inactive')}
-          </Label>
-        </TableCell>
+        <TableCell>{row.startDayTime}</TableCell>
 
-        <TableCell align="center">
-          {row.isAdmin ? (
-            <Iconify
-              width={22}
-              icon="solar:check-circle-bold"
-              sx={{ color: 'success.main' }}
-            />
-          ) : (
-            '-'
-          )}
-        </TableCell>
+        <TableCell>{row.endDayTime}</TableCell>
+
+        <TableCell>{row.maxBookingHours}</TableCell>
+
+        <TableCell>{row.maxBookingByUser}</TableCell>
 
         <TableCell align="right">
           <IconButton onClick={handleOpenPopover} aria-label="Open menu">
@@ -127,14 +88,6 @@ export function UserTableRow({
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
         <MenuList sx={{ p: 1 }}>
-          <MenuItem
-            component="button"
-            onClick={handleSendEmailPassword}
-            sx={{ width: '100%' }}
-          >
-            <Iconify icon="mdi:email-send" sx={{ marginRight: 2 }} />
-            {t('button.send.reset.password')}
-          </MenuItem>
           <MenuItem
             component="button"
             onClick={handleEdit}
