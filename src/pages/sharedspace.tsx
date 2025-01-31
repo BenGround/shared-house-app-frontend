@@ -3,7 +3,9 @@ import { CONFIG } from '../config-global';
 import { useTranslation } from 'react-i18next';
 import { Suspense, lazy } from 'react';
 
-const UserViewLazy = lazy(() => import('../sections/user/userView'));
+const SharedspaceViewLazy = lazy(
+  () => import('../sections/sharedspace/sharedspaceView')
+);
 
 export default function Page() {
   const { t } = useTranslation();
@@ -11,19 +13,19 @@ export default function Page() {
   return (
     <>
       <Helmet>
-        <title>{`${t('users')} - ${CONFIG.appName}`}</title>
+        <title>{`${t('sharedspaces')} - ${CONFIG.appName}`}</title>
         <meta
           name="description"
-          content={`${t('users')} - ${CONFIG.appName}`}
+          content={`${t('sharedspaces')} - ${CONFIG.appName}`}
         />
         <meta
           property="og:title"
-          content={`${t('users')} - ${CONFIG.appName}`}
+          content={`${t('sharedspaces')} - ${CONFIG.appName}`}
         />
       </Helmet>
 
       <Suspense>
-        <UserViewLazy />
+        <SharedspaceViewLazy />
       </Suspense>
     </>
   );

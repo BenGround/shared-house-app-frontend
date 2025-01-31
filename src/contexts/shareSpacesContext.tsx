@@ -2,8 +2,10 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import axiosInstance from 'src/settings/axiosInstance';
 import { SharedSpace } from 'src/types/sharedSpace';
 import { handleError } from 'src/utils/errorHandler';
+import { useUser } from './userContext';
 
 interface ShareSpacesContextType {
+  updateSharedSpaces(shareSpaces: SharedSpace[]): void;
   sharedSpaces: SharedSpace[];
   isLoading: boolean;
   error: string | null;
@@ -25,10 +27,14 @@ export const useShareSpaces = () => {
 const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const { isAuthenticated } = useUser();
   const [sharedSpaces, setSharedSpaces] = useState<SharedSpace[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<boolean>(false);
+
+  const updateSharedSpaces = (sharedSpaces: SharedSpace[]) =>
+    setSharedSpaces(sharedSpaces);
 
   const fetchShareSpaces = async () => {
     if (isLoading) {
@@ -50,12 +56,13 @@ const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    fetchShareSpaces();
-  }, []);
+    if (isAuthenticated && !done) fetchShareSpaces();
+  }, [isAuthenticated]);
 
   return (
     <ShareSpacesContext.Provider
       value={{
+        updateSharedSpaces,
         sharedSpaces,
         isLoading,
         error,

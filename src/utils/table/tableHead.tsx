@@ -5,8 +5,6 @@ import TableHead from '@mui/material/TableHead';
 import TableCell from '@mui/material/TableCell';
 import TableSortLabel from '@mui/material/TableSortLabel';
 
-import { visuallyHidden } from './utils';
-
 type HeadCell = {
   id: string;
   label: string;
@@ -15,7 +13,7 @@ type HeadCell = {
   minWidth?: string | number;
 };
 
-type UserTableHeadProps = {
+type CustomTableHeadProps = {
   orderBy: string;
   rowCount: number;
   numSelected: number;
@@ -25,7 +23,19 @@ type UserTableHeadProps = {
   onSelectAllRows: (isChecked: boolean) => void;
 };
 
-export function UserTableHead({
+const visuallyHidden = {
+  border: 0,
+  margin: -1,
+  padding: 0,
+  width: '1px',
+  height: '1px',
+  overflow: 'hidden',
+  position: 'absolute',
+  whiteSpace: 'nowrap',
+  clip: 'rect(0 0 0 0)',
+} as const;
+
+export function CustomTableHead({
   order,
   onSort,
   orderBy,
@@ -33,7 +43,7 @@ export function UserTableHead({
   headLabel,
   numSelected,
   onSelectAllRows,
-}: UserTableHeadProps) {
+}: CustomTableHeadProps) {
   return (
     <TableHead>
       <TableRow>
