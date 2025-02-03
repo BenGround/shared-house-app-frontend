@@ -30,6 +30,7 @@ import { io } from 'socket.io-client';
 import { Iconify } from 'src/components/iconify';
 import { validateFile } from 'src/utils/imgUtils';
 import { useShareSpaces as useSharedSpaces } from 'src/contexts/shareSpacesContext';
+import { replaceOrAddBooking, updateTimeDate } from './booking.helper';
 
 const BookingModal = React.lazy(() => import('./bookingModal'));
 const BookingCreateDialog = React.lazy(() => import('./bookingCreateDialog'));
@@ -265,14 +266,8 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
         throw new Error(booking);
       }
 
-      booking.startDate = new Date(booking.startDate).setHours(
-        new Date(booking.startDate).getHours() + 9
-      );
-      booking.endDate = new Date(booking.endDate).setHours(
-        new Date(booking.endDate).getHours() + 9
-      );
-
-      setBookings((prevBookings) => [...prevBookings, response.data.booking]);
+      updateTimeDate(booking);
+      setBookings((prevBookings) => [...prevBookings, booking]);
     } catch (error: Error | any) {
       handleError(error);
     } finally {
@@ -455,7 +450,11 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
         newBooking.sharedSpaceId !== sharedSpace.id
       )
         return;
-      setBookings((prevBookings) => [...prevBookings, newBooking]);
+
+      updateTimeDate(newBooking);
+      setBookings((prevBookings) =>
+        replaceOrAddBooking(prevBookings, newBooking)
+      );
     });
 
     socket.current.on('updatedBooking', (updatedBooking: Booking) => {
@@ -464,10 +463,10 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
         updatedBooking.sharedSpaceId !== sharedSpace.id
       )
         return;
+
+      updateTimeDate(updatedBooking);
       setBookings((prevBookings) =>
-        prevBookings.map((booking) =>
-          booking.id === updatedBooking.id ? updatedBooking : booking
-        )
+        replaceOrAddBooking(prevBookings, updatedBooking)
       );
     });
 
