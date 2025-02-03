@@ -58,7 +58,7 @@ export function CreatePasswordView() {
 
     try {
       setLoading(true);
-      const response = await axiosInstance.post('create-password', {
+      const response = await axiosInstance.post('user/create-password', {
         token,
         password,
         confirmPassword,

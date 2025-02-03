@@ -9,6 +9,7 @@ import {
   Checkbox,
   FormControlLabel,
   Divider,
+  Box,
 } from '@mui/material';
 import axiosInstance from 'src/settings/axiosInstance';
 import { useTranslation } from 'react-i18next';
@@ -31,6 +32,7 @@ export type UserPropsModal = {
   email: string;
   roomNumber: number | null;
   isAdmin: boolean;
+  isActive: boolean;
 };
 
 const UserEditModal: React.FC<UserEditModalProps> = ({
@@ -47,6 +49,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
     email: '',
     roomNumber: null,
     isAdmin: false,
+    isActive: false,
   });
 
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
@@ -65,7 +68,8 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
         username: user.username || '',
         email: user.email || '',
         roomNumber: user.roomNumber,
-        isAdmin: user.isAdmin || false,
+        isAdmin: user.isAdmin,
+        isActive: user.isActive,
       });
     } else {
       setIsUpdate(false);
@@ -74,6 +78,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
         email: '',
         roomNumber: null,
         isAdmin: false,
+        isActive: true,
       });
     }
     setValidationErrors({});
@@ -120,6 +125,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
           username: currentUser.username.trim(),
           email: currentUser.email.trim(),
           isAdmin: Boolean(currentUser.isAdmin),
+          isActive: Boolean(currentUser.isActive),
         },
         {
           withCredentials: true,
@@ -147,6 +153,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
           roomNumber: currentUser.roomNumber,
           email: currentUser.email.trim(),
           isAdmin: Boolean(currentUser.isAdmin),
+          isActive: Boolean(currentUser.isActive),
         },
         {
           withCredentials: true,
@@ -198,16 +205,28 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
           sx={{ mb: 1 }}
           disabled={isUpdate}
         />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={currentUser.isAdmin}
-              onChange={(e) => handleChange('isAdmin', e.target.checked)}
-              color="primary"
-            />
-          }
-          label={t('admin')}
-        />
+        <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mt: 2 }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={currentUser.isAdmin}
+                onChange={(e) => handleChange('isAdmin', e.target.checked)}
+                color="primary"
+              />
+            }
+            label={t('admin')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={currentUser.isActive}
+                onChange={(e) => handleChange('isActive', e.target.checked)}
+                color="primary"
+              />
+            }
+            label={t('is.active')}
+          />
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>{t('button.cancel')}</Button>

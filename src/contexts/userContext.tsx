@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import axiosInstance from 'src/settings/axiosInstance';
+import { handleError } from 'src/utils/errorHandler';
 import { loadToast } from 'src/utils/imports';
 
 interface User {
@@ -69,8 +70,7 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
       setAuthCallDone(true);
     } catch (error) {
-      const toast = await loadToast();
-      toast.error(t('login.failed'));
+      handleError(error);
     }
   };
 
@@ -89,7 +89,7 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const checkSession = useCallback(async () => {
     try {
-      const response = await axiosInstance.get('session-status', {
+      const response = await axiosInstance.get('user/session-status', {
         withCredentials: true,
       });
 
@@ -101,8 +101,7 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setUser(null);
       }
     } catch (error) {
-      const toast = await loadToast();
-      toast.error(t('session.failed'));
+      handleError(error);
       setIsAuthenticated(false);
       setUser(null);
     } finally {
@@ -118,7 +117,7 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }
 
     try {
-      await axiosInstance.put<LoginResponse>(
+      await axiosInstance.put(
         '/user/update',
         { username },
         { withCredentials: true }

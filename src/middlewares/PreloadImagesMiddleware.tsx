@@ -4,18 +4,24 @@ import PreloadImage, {
   TypeBackground,
   TypeImage,
 } from '../utils/preloadImages';
-import { useShareSpaces } from '../contexts/shareSpacesContext';
-import { ENGLISH_FLAG, JAPAN_FLAG, OAKHOUSE_LOGO } from 'src/utils/imgUtils';
+import { useSharedSpaces } from '../contexts/shareSpacesContext';
+import {
+  ENGLISH_FLAG,
+  JAPAN_FLAG,
+  OAKHOUSE_LOGO,
+  DASHBOARD_IMG,
+} from 'src/utils/imgUtils';
 
 const PreloadImagesMiddleware: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { sharedSpaces } = useShareSpaces();
+  const { sharedSpaces } = useSharedSpaces();
 
   const imagesToPreLoad = [
     ...sharedSpaces
       .filter((share) => Boolean(share.picture))
       .map((share) => ({ src: share.picture as string, type: TypeBackground })),
+    { src: DASHBOARD_IMG, type: TypeBackground },
     { src: OAKHOUSE_LOGO, type: TypeImage },
     {
       src: JAPAN_FLAG,

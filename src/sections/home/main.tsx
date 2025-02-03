@@ -3,6 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUser } from 'src/contexts/userContext';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { DASHBOARD_IMG } from 'src/utils/imgUtils';
 
 export const Main: React.FC = () => {
   const { user } = useUser();
@@ -35,7 +36,7 @@ export const Main: React.FC = () => {
         sx={{
           width: '100%',
           height: { xs: 350, md: 495 },
-          backgroundImage: `url('https://i.imgur.com/wmFWM7L.jpeg')`,
+          backgroundImage: `url('${DASHBOARD_IMG}')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           borderRadius: '0.5rem',

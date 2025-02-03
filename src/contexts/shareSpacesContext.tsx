@@ -20,7 +20,7 @@ const ShareSpacesContext = createContext<ShareSpacesContextType | undefined>(
   undefined
 );
 
-export const useShareSpaces = () => {
+export const useSharedSpaces = () => {
   const context = useContext(ShareSpacesContext);
   if (!context) {
     throw new Error('useShareSpaces must be used within a ShareSpacesProvider');

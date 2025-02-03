@@ -26,10 +26,10 @@ import { toast } from 'react-toastify';
 import axiosInstance from 'src/settings/axiosInstance';
 import { Booking } from 'src/types/booking';
 import LoadingSpinner from 'src/components/loadingSpinner/loadingSpinner';
-import { io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 import { Iconify } from 'src/components/iconify';
 import { validateFile } from 'src/utils/imgUtils';
-import { useShareSpaces as useSharedSpaces } from 'src/contexts/shareSpacesContext';
+import { useSharedSpaces } from 'src/contexts/shareSpacesContext';
 import { replaceOrAddBooking, updateTimeDate } from './booking.helper';
 
 const BookingModal = React.lazy(() => import('./bookingModal'));
@@ -41,7 +41,7 @@ const DayPilotCalendar = React.lazy(() =>
 );
 
 type BookingCalendarProps = {
-  sharedSpace: SharedSpace | null;
+  sharedSpace: SharedSpace;
   isFetching: (fetching: boolean) => void;
 };
 
@@ -55,7 +55,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
     useSharedSpaces();
   const theme = useTheme();
 
-  const socket = useRef<any>(null);
+  const socketRef = useRef<Socket | null>(null);
   const isMobile = window.innerWidth <= 768;
   const isEn = i18n.language === 'en';
   const language = isEn ? 'en-US' : 'ja-JP';
@@ -82,12 +82,8 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
   const [disabledImgButttons, setDisabledImgButttons] =
     useState<boolean>(false);
   const [picture, setPicture] = useState<string | undefined>(
-    sharedSpace?.picture || undefined
+    sharedSpace.picture
   );
-
-  if (!sharedSpace) {
-    return <LoadingSpinner translationKey="checking.sharedspace" />;
-  }
 
   const memoizedEvents = useMemo(() => {
     return bookings.map((booking: Booking) => ({
@@ -120,8 +116,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
   };
 
   const fetchBookings = useCallback(async () => {
-    if (!sharedSpace) return;
-
     const endDate = startDate.addDays(isMobile ? 1 : 7);
     const cacheKey = generateCacheKey(startDate, endDate);
 
@@ -160,7 +154,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
   }, [sharedSpace, startDate, isMobile, eventCache]);
 
   const fetchNumberBookingsByUser = useCallback(async () => {
-    if (!sharedSpace) return;
     try {
       isCallingApi(true);
       const response = await axiosInstance.get(
@@ -439,12 +432,19 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
   useEffect(() => {
     const backendUrl = process.env.REACT_APP_WS_URL;
     if (!sharedSpace || !backendUrl) return;
-    socket.current = io(backendUrl, {
+
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+    }
+
+    socketRef.current = io(backendUrl, {
       withCredentials: true,
       transports: ['websocket', 'polling'],
     });
 
-    socket.current.on('newBooking', (newBooking: Booking) => {
+    const socket = socketRef.current;
+
+    socket.on('newBooking', (newBooking: Booking) => {
       if (
         newBooking.roomNumber === user?.roomNumber ||
         newBooking.sharedSpaceId !== sharedSpace.id
@@ -457,7 +457,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
       );
     });
 
-    socket.current.on('updatedBooking', (updatedBooking: Booking) => {
+    socket.on('updatedBooking', (updatedBooking: Booking) => {
       if (
         updatedBooking.roomNumber === user?.roomNumber ||
         updatedBooking.sharedSpaceId !== sharedSpace.id
@@ -470,7 +470,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
       );
     });
 
-    socket.current.on('deletedBooking', (deletedBooking: Booking) => {
+    socket.on('deletedBooking', (deletedBooking: Booking) => {
       if (
         deletedBooking.roomNumber === user?.roomNumber ||
         deletedBooking.sharedSpaceId !== sharedSpace.id
@@ -480,7 +480,14 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
         prevBookings.filter((booking) => booking.id !== deletedBooking.id)
       );
     });
-  }, []);
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
+    };
+  }, [sharedSpace]);
 
   return (
     <Box

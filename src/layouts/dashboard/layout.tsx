@@ -12,12 +12,12 @@ import { Iconify } from 'src/components/iconify';
 import { Main } from './main';
 import { layoutClasses } from '../classes';
 import { NavMobile, NavDesktop } from './nav';
-import { navData } from '../config-nav-dashboard';
-import { MenuButton } from '../components/menu-button';
-import { LayoutSection } from '../core/layout-section';
-import { HeaderSection } from '../core/header-section';
-import { AccountPopover } from '../components/account-popover';
-import { LanguagePopover } from '../components/language-popover';
+import { navData } from '../configNavDashboard';
+import { MenuButton } from '../components/menuButton';
+import { LayoutSection } from '../core/layoutSection';
+import { HeaderSection } from '../core/headerSection';
+import { AccountPopover } from '../components/accountPopover';
+import { LanguagePopover } from '../components/languagePopover';
 import { useTranslation } from 'react-i18next';
 import { Divider } from '@mui/material';
 

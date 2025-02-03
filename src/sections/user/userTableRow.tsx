@@ -22,7 +22,7 @@ export type UserProps = {
   roomNumber: number;
   email: string;
   isAdmin: boolean;
-  isSet: boolean;
+  isActive: boolean;
   profilePicture: string;
 };
 
@@ -95,8 +95,8 @@ export function UserTableRow({
         <TableCell>{row.email}</TableCell>
 
         <TableCell>
-          <Label color={row.isSet ? 'success' : 'error'}>
-            {row.isSet ? t('active') : t('inactive')}
+          <Label color={row.isActive ? 'success' : 'error'}>
+            {row.isActive ? t('active') : t('inactive')}
           </Label>
         </TableCell>
 

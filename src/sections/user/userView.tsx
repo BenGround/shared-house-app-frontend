@@ -70,6 +70,7 @@ function UserView() {
               username: userProps.username,
               email: userProps.email,
               isAdmin: userProps.isAdmin,
+              isActive: userProps.isActive,
             }
           : u
       )
@@ -212,7 +213,7 @@ function UserView() {
                         { id: 'roomNumber', label: t('room.number') },
                         { id: 'username', label: t('username') },
                         { id: 'email', label: t('email') },
-                        { id: 'isSet', label: t('active'), align: 'center' },
+                        { id: 'isActive', label: t('active'), align: 'center' },
                         { id: 'isAdmin', label: t('admin') },
                         { id: '', label: '' },
                       ]}

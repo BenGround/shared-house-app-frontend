@@ -28,7 +28,7 @@ import { TableNoData } from 'src/utils/table/tableNoData';
 import { TableEmptyRows } from 'src/utils/table/tableEmptyRows';
 import { CustomTableHead } from 'src/utils/table/tableHead';
 import { CustomTableToolbar } from 'src/utils/table/tableToolbar';
-import { useShareSpaces } from 'src/contexts/shareSpacesContext';
+import { useSharedSpaces } from 'src/contexts/shareSpacesContext';
 
 const SimpleBarWrapper = styled.div`
   height: 100% !important;
@@ -49,7 +49,7 @@ function SharedspaceView() {
   const table = useTable();
   const { t } = useTranslation();
 
-  const { sharedSpaces, updateSharedSpaces } = useShareSpaces();
+  const { sharedSpaces, updateSharedSpaces } = useSharedSpaces();
   const [tableSharedSpaces, setSharedspaces] =
     useState<SharedSpace[]>(sharedSpaces);
   const [filterNameCode, setFilterNameCode] = useState('');
@@ -170,7 +170,7 @@ function SharedspaceView() {
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
-          {t('sharedspaces')}
+          {t('sharedspaces.settings')}
         </Typography>
         <Button
           variant="contained"

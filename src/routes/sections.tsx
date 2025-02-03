@@ -3,7 +3,7 @@ import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 import { AuthLayout } from '../layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
 import ProtectedRoute from './protectedRoute';
-import { useShareSpaces } from 'src/contexts/shareSpacesContext';
+import { useSharedSpaces } from 'src/contexts/shareSpacesContext';
 import { useUser } from 'src/contexts/userContext';
 import LoadingSpinner from 'src/components/loadingSpinner/loadingSpinner';
 
@@ -23,7 +23,7 @@ const renderFallback = <LoadingSpinner translationKey="loading.routes" />;
 
 function Router() {
   const { isAuthenticated, user } = useUser();
-  const { sharedSpaces, isLoading } = useShareSpaces();
+  const { sharedSpaces, isLoading } = useSharedSpaces();
 
   const routes = useRoutes([
     {

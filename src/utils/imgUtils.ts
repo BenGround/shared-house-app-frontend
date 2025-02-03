@@ -5,6 +5,7 @@ export const JAPAN_FLAG =
   'https://upload.wikimedia.org/wikipedia/commons/9/9e/Flag_of_Japan.svg';
 export const ENGLISH_FLAG =
   'https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg';
+export const DASHBOARD_IMG = 'https://i.imgur.com/wmFWM7L.jpeg';
 
 const MAX_FILE_SIZE_MB = 2;
 

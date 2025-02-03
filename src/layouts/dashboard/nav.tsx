@@ -13,16 +13,19 @@ import { varAlpha } from '../../theme/styles';
 
 import { Scrollbar } from '../../components/scrollbar';
 import { useTranslation } from 'react-i18next';
-import { Divider } from '@mui/material';
+import { Divider, Typography } from '@mui/material';
 import { useUser } from 'src/contexts/userContext';
 import { OAKHOUSE_LOGO } from 'src/utils/imgUtils';
+import { Iconify } from 'src/components/iconify';
 
 export type NavContentProps = {
   data: {
     path: string;
     titleCode: string;
+    iconName: string;
     info?: React.ReactNode;
     admin?: boolean;
+    inDev?: boolean;
   }[];
   onNavItemClick?: () => void;
 };
@@ -121,25 +124,28 @@ export function NavContent({ data, onNavItemClick }: NavContentProps) {
             />
             <Divider />
             {data.map((item) => {
-              const isActived = item.path === `/${pathname.split('/')[1]}`;
+              const isActive = item.path === `/${pathname.split('/')[1]}`;
               return (
                 <ListItem disableGutters disablePadding key={item.titleCode}>
                   <ListItemButton
                     disableGutters
+                    disabled={item.inDev}
                     component={RouterLink}
                     href={item.path}
                     onClick={onNavItemClick}
                     sx={{
                       pl: 2,
-                      py: 1,
-                      gap: 2,
+                      py: 1.5,
+                      gap: 3,
                       pr: 1.5,
                       borderRadius: 0.75,
                       typography: 'body2',
                       fontWeight: 'fontWeightMedium',
                       color: 'var(--layout-nav-item-color)',
                       minHeight: 'var(--layout-nav-item-height)',
-                      ...(isActived && {
+                      display: 'flex',
+                      alignItems: 'center',
+                      ...(isActive && {
                         fontWeight: 'fontWeightSemiBold',
                         bgcolor: 'var(--layout-nav-item-active-bg)',
                         color: 'var(--layout-nav-item-active-color)',
@@ -149,11 +155,47 @@ export function NavContent({ data, onNavItemClick }: NavContentProps) {
                       }),
                     }}
                   >
-                    <Box component="span" flexGrow={1}>
-                      {t(item.titleCode)}
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      gap={2}
+                      flexGrow={1}
+                    >
+                      <Iconify icon={item.iconName} width={20} height={20} />{' '}
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: isActive
+                            ? 'fontWeightSemiBold'
+                            : 'fontWeightMedium',
+                        }}
+                      >
+                        {t(item.titleCode)}
+                      </Typography>
+                      {item.inDev && (
+                        <Typography variant="body2" color="warning.main">
+                          🚧
+                        </Typography>
+                      )}
+                      {item.admin && (
+                        <Typography variant="body2" color="warning.main">
+                          🛡️
+                        </Typography>
+                      )}
                     </Box>
 
-                    {item.info && item.info}
+                    {item.info && (
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          ml: 2,
+                        }}
+                      >
+                        {item.info}
+                      </Box>
+                    )}
                   </ListItemButton>
                 </ListItem>
               );

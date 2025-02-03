@@ -3,7 +3,7 @@ import { Box, Tab, Tabs, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { useShareSpaces } from 'src/contexts/shareSpacesContext';
+import { useSharedSpaces } from 'src/contexts/shareSpacesContext';
 import { CSSTransition } from 'react-transition-group';
 import 'src/css/transition.css';
 
@@ -17,7 +17,7 @@ const BookingCalendars: React.FC<BookingCalendarsProps> = ({
   sharedSpaceNameCode,
 }) => {
   const { t, i18n } = useTranslation();
-  const { sharedSpaces, error } = useShareSpaces();
+  const { sharedSpaces, error } = useSharedSpaces();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);

@@ -4,9 +4,9 @@ import { stylesMode } from '../../theme/styles';
 
 import Box from '@mui/material/Box';
 import { Main } from './main';
-import { HeaderSection } from '../core/header-section';
-import { LayoutSection } from '../core/layout-section';
-import { LanguagePopover } from '../components/language-popover';
+import { HeaderSection } from '../core/headerSection';
+import { LayoutSection } from '../core/layoutSection';
+import { LanguagePopover } from '../components/languagePopover';
 import { _langs } from 'src/data';
 
 export type AuthLayoutProps = {

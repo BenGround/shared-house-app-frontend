@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
 import GlobalStyles from '@mui/material/GlobalStyles';
 
-import { baseVars } from '../config-vars';
+import { baseVars } from '../configVars';
 import { layoutClasses } from '../classes';
 
 export type LayoutSectionProps = {
