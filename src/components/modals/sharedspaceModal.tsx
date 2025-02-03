@@ -20,7 +20,7 @@ interface SharedSpaceEditModalProps {
   onClose: () => void;
   sharedspace: SharedSpace | null;
   onSharedspaceUpdated: (sharedspaceProps: SharedspacePropsModal) => void;
-  onSharedspaceCreated: (sharedspace: SharedSpace) => void;
+  onSharedspaceCreated?: (sharedspace: SharedSpace) => void;
 }
 
 export interface SharedspacePropsModal {
@@ -188,7 +188,7 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
         }
       );
       toast.success(t('sharedspace.created.success'));
-      onSharedspaceCreated(response.data);
+      if (onSharedspaceCreated) onSharedspaceCreated(response.data);
       onClose();
     } catch (error) {
       handleError(error);

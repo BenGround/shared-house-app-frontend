@@ -20,12 +20,13 @@ import { TableEmptyRows } from '../../utils/table/tableEmptyRows';
 import type { UserProps } from './userTableRow';
 import axiosInstance from 'src/settings/axiosInstance';
 import SimpleBar from 'simplebar-react';
-import UserEditModal, { UserPropsModal } from './userModal';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { handleError } from 'src/utils/errorHandler';
 import { CustomTableToolbar } from 'src/utils/table/tableToolbar';
 import { emptyRows, getComparator } from 'src/utils/table/utils';
+import UserEditModal, { UserPropsModal } from 'src/components/modals/userModal';
+import LoadingSpinner from 'src/components/loadingSpinner/loadingSpinner';
 
 const SimpleBarWrapper = styled.div`
   height: 100% !important;
@@ -50,20 +51,14 @@ function UserView() {
   const [filterRoomNumber, setFilterRoomNumber] = useState('');
   const [openModal, setOpenModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserProps | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    let isMounted = true;
-
     axiosInstance
       .get('admin/getUsers', { withCredentials: true })
-      .then((response) => {
-        if (isMounted) setUsers(response.data);
-      })
-      .catch((error) => handleError(error));
-
-    return () => {
-      isMounted = false;
-    };
+      .then((response) => setUsers(response.data))
+      .catch((error) => handleError(error))
+      .finally(() => setIsLoading(false));
   }, []);
 
   const updateUserFromUsers = (userProps: UserPropsModal) => {
@@ -165,106 +160,119 @@ function UserView() {
 
   return (
     <DashboardContent>
-      <Box display="flex" alignItems="center" mb={5}>
-        <Typography variant="h4" flexGrow={1}>
-          {t('users')}
-        </Typography>
-        <Button
-          variant="contained"
-          color="inherit"
-          startIcon={<Iconify icon="mingcute:add-line" />}
-          onClick={() => {
-            setSelectedUser(null);
-            setOpenModal(true);
-          }}
-        >
-          {t('new.user')}
-        </Button>
-      </Box>
+      {isLoading ? (
+        <LoadingSpinner translationKey="checking.auth" />
+      ) : (
+        <Box>
+          <Box display="flex" alignItems="center" mb={5}>
+            <Typography variant="h4" flexGrow={1}>
+              {t('users')}
+            </Typography>
+            <Button
+              variant="contained"
+              color="inherit"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+              onClick={() => {
+                setSelectedUser(null);
+                setOpenModal(true);
+              }}
+            >
+              {t('new.user')}
+            </Button>
+          </Box>
 
-      <Card>
-        <CustomTableToolbar
-          numSelected={table.selected.length}
-          filter={filterRoomNumber}
-          onFilter={(event) => {
-            setFilterRoomNumber(event.target.value);
-            table.onResetPage();
-          }}
-          onDeleteSelected={() => deleteRows(table.selected ?? [])}
-        />
+          <Card>
+            <CustomTableToolbar
+              numSelected={table.selected.length}
+              filter={filterRoomNumber}
+              onFilter={(event) => {
+                setFilterRoomNumber(event.target.value);
+                table.onResetPage();
+              }}
+              onDeleteSelected={() => deleteRows(table.selected ?? [])}
+            />
 
-        <SimpleBarWrapper>
-          <TableContainer sx={{ maxHeight: 500, overflow: 'auto' }}>
-            <SimpleBar autoHide={true}>
-              <Table sx={{ minWidth: 800 }}>
-                <CustomTableHead
-                  order={table.order}
-                  orderBy={table.orderBy}
-                  rowCount={users.length}
-                  numSelected={table.selected.length}
-                  onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      users.map((user) => user.roomNumber)
-                    )
-                  }
-                  headLabel={[
-                    { id: 'roomNumber', label: t('room.number') },
-                    { id: 'username', label: t('username') },
-                    { id: 'email', label: t('email') },
-                    { id: 'isSet', label: t('active'), align: 'center' },
-                    { id: 'isAdmin', label: t('admin') },
-                    { id: '', label: '' },
-                  ]}
-                />
-                <TableBody>
-                  {dataFiltered
-                    .slice(
-                      table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
-                    )
-                    .map((row) => (
-                      <UserTableRow
-                        key={row.roomNumber}
-                        row={row}
-                        selected={table.selected.includes(row.roomNumber)}
-                        onSelectRow={() => table.onSelectRow(row.roomNumber)}
-                        onEditRow={(user) => handleOpenModal(user)}
-                        onDeleteRow={(roomNumber) => deleteRows([roomNumber])}
+            <SimpleBarWrapper>
+              <TableContainer sx={{ maxHeight: 500, overflow: 'auto' }}>
+                <SimpleBar autoHide={true}>
+                  <Table sx={{ minWidth: 800 }}>
+                    <CustomTableHead
+                      order={table.order}
+                      orderBy={table.orderBy}
+                      rowCount={users.length}
+                      numSelected={table.selected.length}
+                      onSort={table.onSort}
+                      onSelectAllRows={(checked) =>
+                        table.onSelectAllRows(
+                          checked,
+                          users.map((user) => user.roomNumber)
+                        )
+                      }
+                      headLabel={[
+                        { id: 'roomNumber', label: t('room.number') },
+                        { id: 'username', label: t('username') },
+                        { id: 'email', label: t('email') },
+                        { id: 'isSet', label: t('active'), align: 'center' },
+                        { id: 'isAdmin', label: t('admin') },
+                        { id: '', label: '' },
+                      ]}
+                    />
+                    <TableBody>
+                      {dataFiltered
+                        .slice(
+                          table.page * table.rowsPerPage,
+                          table.page * table.rowsPerPage + table.rowsPerPage
+                        )
+                        .map((row) => (
+                          <UserTableRow
+                            key={row.roomNumber}
+                            row={row}
+                            selected={table.selected.includes(row.roomNumber)}
+                            onSelectRow={() =>
+                              table.onSelectRow(row.roomNumber)
+                            }
+                            onEditRow={(user) => handleOpenModal(user)}
+                            onDeleteRow={(roomNumber) =>
+                              deleteRows([roomNumber])
+                            }
+                          />
+                        ))}
+
+                      <TableEmptyRows
+                        height={68}
+                        emptyRows={emptyRows(
+                          table.page,
+                          table.rowsPerPage,
+                          users.length
+                        )}
                       />
-                    ))}
 
-                  <TableEmptyRows
-                    height={68}
-                    emptyRows={emptyRows(
-                      table.page,
-                      table.rowsPerPage,
-                      users.length
-                    )}
-                  />
+                      {notFound && (
+                        <TableNoData searchQuery={filterRoomNumber} />
+                      )}
+                    </TableBody>
+                  </Table>
+                </SimpleBar>
+              </TableContainer>
+            </SimpleBarWrapper>
 
-                  {notFound && <TableNoData searchQuery={filterRoomNumber} />}
-                </TableBody>
-              </Table>
-            </SimpleBar>
-          </TableContainer>
-        </SimpleBarWrapper>
+            <TablePagination
+              labelRowsPerPage={t('rows.per.page')}
+              labelDisplayedRows={({ from, to, count }) =>
+                t('table.from.to.count', { from, to, count })
+              }
+              component="div"
+              page={table.page}
+              count={users.length}
+              rowsPerPage={table.rowsPerPage}
+              onPageChange={table.onChangePage}
+              rowsPerPageOptions={[5, 10, 25]}
+              onRowsPerPageChange={table.onChangeRowsPerPage}
+            />
+          </Card>
+        </Box>
+      )}
 
-        <TablePagination
-          labelRowsPerPage={t('rows.per.page')}
-          labelDisplayedRows={({ from, to, count }) =>
-            t('table.from.to.count', { from, to, count })
-          }
-          component="div"
-          page={table.page}
-          count={users.length}
-          rowsPerPage={table.rowsPerPage}
-          onPageChange={table.onChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
-          onRowsPerPageChange={table.onChangeRowsPerPage}
-        />
-      </Card>
       <UserEditModal
         open={openModal}
         onClose={handleCloseModal}

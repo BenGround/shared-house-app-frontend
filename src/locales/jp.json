@@ -97,6 +97,7 @@
   "profile.delete.picture": "プロフィール写真を削除",
   "profile.save.changes": "変更を保存する",
   "profile.picture.confirmDelete": "プロフィール写真を削除しますか？",
+  "picture.confirmDelete": "写真を削除しますか？",
   "profile.username.validationMessage": "ユーザー名は3文字以上25文字以内で、英字、数字、スペース、アンダースコア、または日本語の文字のみを含む必要があります",
   "email": "メールアドレス",
   "username": "ユーザー名",

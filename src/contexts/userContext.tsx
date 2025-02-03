@@ -8,8 +8,9 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import axiosInstance from 'src/settings/axiosInstance';
+import { loadToast } from 'src/utils/imports';
 
-export interface User {
+interface User {
   username: string | undefined;
   roomNumber: string;
   email: string;
@@ -35,11 +36,6 @@ interface UserContextType {
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
-
-const loadToast = async () => {
-  const { toast } = await import('react-toastify');
-  return toast;
-};
 
 const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { t } = useTranslation();

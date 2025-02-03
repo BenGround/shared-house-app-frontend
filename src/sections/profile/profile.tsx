@@ -12,6 +12,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { LoadingButton } from '@mui/lab';
+import { validateFile } from 'src/utils/imgUtils';
 
 const Profile: React.FC = () => {
   return <ProfileView />;
@@ -29,25 +30,13 @@ export function ProfileView() {
   const [disabledImgButttons, setDisabledImgButttons] =
     useState<boolean>(false);
 
-  const MAX_FILE_SIZE_MB = 2;
-
-  const validateFile = (file: File): string | undefined => {
-    const fileSizeInMB = file.size / 1024 / 1024;
-    if (!file.type.startsWith('image/')) {
-      return t('file.invalid.format');
-    }
-    if (fileSizeInMB > MAX_FILE_SIZE_MB) {
-      return t('file.size.exceeds', { size: MAX_FILE_SIZE_MB });
-    }
-    return undefined;
-  };
-
   const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
   };
 
   const validateUsername = (username: string): boolean => {
-    const usernameRegex = /^[a-zA-Z0-9\s_\u3040-\u30FF\u4E00-\u9FFF]{3,25}$/;
+    const usernameRegex =
+      /^[a-zA-Z0-9\s_\u3040-\u30FF\u4E00-\u9FFF\u00C0-\u00FF]{3,25}$/;
     return usernameRegex.test(username);
   };
 

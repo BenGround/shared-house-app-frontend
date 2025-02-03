@@ -5,8 +5,17 @@ import React, {
   Suspense,
   useMemo,
   useRef,
+  ChangeEvent,
 } from 'react';
-import { Card, ButtonGroup, Button, Box, Typography } from '@mui/material';
+import {
+  Card,
+  ButtonGroup,
+  Button,
+  Box,
+  Typography,
+  IconButton,
+  useTheme,
+} from '@mui/material';
 import { useUser } from 'src/contexts/userContext';
 import { useTranslation } from 'react-i18next';
 import { SharedSpace } from 'src/types/sharedSpace';
@@ -18,6 +27,9 @@ import axiosInstance from 'src/settings/axiosInstance';
 import { Booking } from 'src/types/booking';
 import LoadingSpinner from 'src/components/loadingSpinner/loadingSpinner';
 import { io } from 'socket.io-client';
+import { Iconify } from 'src/components/iconify';
+import { validateFile } from 'src/utils/imgUtils';
+import { useShareSpaces as useSharedSpaces } from 'src/contexts/shareSpacesContext';
 
 const BookingModal = React.lazy(() => import('./bookingModal'));
 const BookingCreateDialog = React.lazy(() => import('./bookingCreateDialog'));
@@ -26,14 +38,6 @@ const DayPilotCalendar = React.lazy(() =>
     default: mod.DayPilotCalendar,
   }))
 );
-
-const _shareSpacesImg = {
-  bath: 'https://i.imgur.com/UJn3GdA.jpeg',
-  gym: 'https://i.imgur.com/5qz622G.jpeg',
-  'music-theater': 'https://i.imgur.com/QmDHn63.jpeg',
-};
-
-type ShareSpaceKeys = keyof typeof _shareSpacesImg;
 
 type BookingCalendarProps = {
   sharedSpace: SharedSpace | null;
@@ -46,6 +50,9 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
 }) => {
   const { user } = useUser();
   const { i18n, t } = useTranslation();
+  const { updateSharedSpacePicture, removeSharedSpacePicture } =
+    useSharedSpaces();
+  const theme = useTheme();
 
   const socket = useRef<any>(null);
   const isMobile = window.innerWidth <= 768;
@@ -53,11 +60,12 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
   const language = isEn ? 'en-US' : 'ja-JP';
 
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [indoModalOpen, setInfoModalOpen] = useState(false);
+  const [infoModalOpen, setInfoModalOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [bookingTimeHours, setBookingTimeHours] = useState<number>(0);
   const [remainingsBookings, setRemainingBookings] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [eventCache, setEventCache] = useState<Set<string>>(new Set());
   const [startDate, setStartDate] = useState<DayPilot.Date>(
     isMobile
@@ -69,6 +77,11 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
   );
   const [selectedEvent, setSelectedEvent] = useState<DayPilot.EventData | null>(
     null
+  );
+  const [disabledImgButttons, setDisabledImgButttons] =
+    useState<boolean>(false);
+  const [picture, setPicture] = useState<string | undefined>(
+    sharedSpace?.picture || undefined
   );
 
   if (!sharedSpace) {
@@ -326,7 +339,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
         { withCredentials: true }
       );
 
-      if (response.status === 204) {
+      if (response.status === 200) {
         toast.success(t('bookings.update.success'));
         updateSuccess = true;
       } else {
@@ -355,6 +368,41 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
     }
   };
 
+  const handleSharedSpaceImageChange = async (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const validationError = validateFile(file);
+      if (validationError) {
+        toast.error(validationError);
+        return;
+      }
+
+      setDisabledImgButttons(true);
+      const result = await updateSharedSpacePicture(file, sharedSpace.id);
+
+      if (result) {
+        const reader = new FileReader();
+        reader.onload = () => setPicture(reader.result as string);
+        reader.readAsDataURL(file);
+      }
+      setDisabledImgButttons(false);
+    } else {
+      toast.error(t('file.not.loaded'));
+    }
+  };
+
+  const handleSharedSpaceImageDelete = async () => {
+    const confirmed = window.confirm(t('picture.confirmDelete'));
+    if (!confirmed) return;
+
+    setDisabledImgButttons(true);
+    const result = await removeSharedSpacePicture(sharedSpace.id);
+    setDisabledImgButttons(false);
+    if (result) setPicture(undefined);
+  };
+
   const handleResizeEvent = async (args: DayPilot.CalendarEventResizeArgs) => {
     updateBookingApiCall(args.e.data.id, args.newStart, args.newEnd);
   };
@@ -369,10 +417,20 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
 
   const hasFetched = useRef(false);
   useEffect(() => {
+    setPicture(sharedSpace.picture);
     setBookings([]);
+    setIsImageLoaded(false);
     setEventCache(new Set<string>());
     fetchNumberBookingsByUser();
     hasFetched.current = false;
+
+    if (sharedSpace.picture) {
+      const img = new Image();
+      img.src = sharedSpace.picture;
+
+      img.onload = () => setIsImageLoaded(true);
+      img.onerror = () => setIsImageLoaded(false);
+    }
   }, [sharedSpace]);
   useEffect(() => {
     hasFetched.current = false;
@@ -437,9 +495,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
         <Box
           sx={{
             width: '100%',
-            backgroundImage: `url(${
-              _shareSpacesImg[sharedSpace.nameCode as ShareSpaceKeys]
-            })`,
+            backgroundImage: isImageLoaded ? `url(${picture})` : 'none',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             borderRadius: '0.5rem',
@@ -448,14 +504,55 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
             alignItems: 'center',
             justifyContent: 'center',
             padding: 5,
-            color: 'white',
+            color: isImageLoaded ? 'white' : theme.vars.palette.text.primary,
+            position: 'relative',
           }}
         >
+          {user?.isAdmin && (
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 8,
+                right: 8,
+                display: 'flex',
+                gap: 1,
+              }}
+            >
+              <label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={handleSharedSpaceImageChange}
+                  aria-label={t('profile.upload.picture')}
+                />
+                <IconButton
+                  aria-label="add-image"
+                  onClick={() => {}}
+                  disabled={disabledImgButttons}
+                  sx={{ color: isImageLoaded ? 'white' : 'gray' }}
+                  component="span"
+                >
+                  <Iconify icon="mdi:image-plus" />
+                </IconButton>
+              </label>
+              <IconButton
+                aria-label="remove-image"
+                onClick={handleSharedSpaceImageDelete}
+                disabled={disabledImgButttons}
+                sx={{ color: isImageLoaded ? 'white' : 'gray' }}
+                component="span"
+              >
+                <Iconify icon="mdi:image-remove" />{' '}
+              </IconButton>
+            </Box>
+          )}
+
           <Typography
             variant="h5"
             sx={{
               fontWeight: 'bold',
-              textShadow: '2px 2px 4px #000000',
+              textShadow: isImageLoaded ? '2px 2px 4px #000000' : 'none',
             }}
           >
             {isEn ? sharedSpace.nameEn : sharedSpace.nameJp}
@@ -615,9 +712,9 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
         </Box>
       </Card>
       <Suspense>
-        {indoModalOpen && selectedEvent && (
+        {infoModalOpen && selectedEvent && (
           <BookingModal
-            open={indoModalOpen}
+            open={infoModalOpen}
             onClose={() => setInfoModalOpen(false)}
             selectedEvent={selectedEvent}
             onDelete={(id) => deleteEvent(id)}

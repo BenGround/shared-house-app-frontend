@@ -19,7 +19,7 @@ import axiosInstance from 'src/settings/axiosInstance';
 import SimpleBar from 'simplebar-react';
 import SharedspaceEditModal, {
   SharedspacePropsModal,
-} from './sharedspaceModal';
+} from '../../components/modals/sharedspaceModal';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { handleError } from 'src/utils/errorHandler';

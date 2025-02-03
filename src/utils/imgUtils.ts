@@ -1,0 +1,20 @@
+import i18n from 'i18next';
+
+export const OAKHOUSE_LOGO = 'https://www.oakhouse.jp/assets/img/logo.png';
+export const JAPAN_FLAG =
+  'https://upload.wikimedia.org/wikipedia/commons/9/9e/Flag_of_Japan.svg';
+export const ENGLISH_FLAG =
+  'https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg';
+
+const MAX_FILE_SIZE_MB = 2;
+
+export const validateFile = (file: File): string | undefined => {
+  const fileSizeInMB = file.size / 1024 / 1024;
+  if (!file.type.startsWith('image/')) {
+    return i18n.t('file.invalid.format');
+  }
+  if (fileSizeInMB > MAX_FILE_SIZE_MB) {
+    return i18n.t('file.size.exceeds', { size: MAX_FILE_SIZE_MB });
+  }
+  return undefined;
+};

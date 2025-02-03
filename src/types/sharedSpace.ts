@@ -7,6 +7,7 @@ export interface SharedSpace {
   descriptionJp: string | null;
   startDayTime: string;
   endDayTime: string;
+  picture?: string;
   maxBookingHours: number;
   maxBookingByUser: number;
 }
