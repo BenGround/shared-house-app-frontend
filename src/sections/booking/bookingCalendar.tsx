@@ -49,7 +49,8 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
 
   const socket = useRef<any>(null);
   const isMobile = window.innerWidth <= 768;
-  const language = i18n.language === 'en' ? 'en-US' : 'ja-JP';
+  const isEn = i18n.language === 'en';
+  const language = isEn ? 'en-US' : 'ja-JP';
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [indoModalOpen, setInfoModalOpen] = useState(false);
@@ -457,7 +458,13 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
               textShadow: '2px 2px 4px #000000',
             }}
           >
-            {t(sharedSpace.nameCode)}
+            {isEn ? sharedSpace.nameEn : sharedSpace.nameJp}
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{ textAlign: 'center', marginBottom: 3 }}
+          >
+            {isEn ? sharedSpace.descriptionEn : sharedSpace.descriptionJp}
           </Typography>
           <Typography variant="body1" sx={{ textAlign: 'center' }}>
             {t('bookings.maxBookingHours', {

@@ -70,7 +70,10 @@ function SharedspaceView() {
           ? {
               ...u,
               nameCode: sharedSpaceProps.nameCode,
-              description: sharedSpaceProps.description,
+              nameEn: sharedSpaceProps.nameEn,
+              nameJp: sharedSpaceProps.nameJp,
+              descriptionEn: sharedSpaceProps.descriptionEn,
+              descriptionJp: sharedSpaceProps.descriptionJp,
               maxBookingByUser: sharedSpaceProps.maxBookingByUser,
               maxBookingHours: sharedSpaceProps.maxBookingHours,
               startDayTime: sharedSpaceProps.startDayTime,
@@ -213,7 +216,16 @@ function SharedspaceView() {
                   }
                   headLabel={[
                     { id: 'nameCode', label: t('sharedspace.name.code') },
-                    { id: 'description', label: t('sharedspace.description') },
+                    { id: 'nameEn', label: t('sharedspace.name.en') },
+                    { id: 'nameJp', label: t('sharedspace.name.jp') },
+                    {
+                      id: 'descriptionEn',
+                      label: t('sharedspace.description.en'),
+                    },
+                    {
+                      id: 'descriptionJp',
+                      label: t('sharedspace.description.jp'),
+                    },
                     {
                       id: 'startDayTime',
                       label: t('sharedspace.start.day.time'),

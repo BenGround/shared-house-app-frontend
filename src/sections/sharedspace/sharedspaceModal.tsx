@@ -23,15 +23,18 @@ interface SharedSpaceEditModalProps {
   onSharedspaceCreated: (sharedspace: SharedSpace) => void;
 }
 
-export type SharedspacePropsModal = {
+export interface SharedspacePropsModal {
   id?: number;
   nameCode: string;
-  description: string | null;
+  nameEn: string;
+  nameJp: string;
+  descriptionEn: string | null;
+  descriptionJp: string | null;
   startDayTime: string;
   endDayTime: string;
   maxBookingHours: number;
   maxBookingByUser: number;
-};
+}
 
 const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
   open,
@@ -45,7 +48,10 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
   const [currentSharespace, setCurrentSharespace] =
     useState<SharedspacePropsModal>({
       nameCode: '',
-      description: '',
+      nameEn: '',
+      nameJp: '',
+      descriptionEn: '',
+      descriptionJp: '',
       startDayTime: '',
       endDayTime: '',
       maxBookingHours: 0,
@@ -56,7 +62,10 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [validationErrors, setValidationErrors] = useState<{
     nameCode?: string;
-    description?: string;
+    nameEn?: string;
+    nameJp?: string;
+    descriptionEn?: string;
+    descriptionJp?: string;
     startDayTime?: string;
     endDayTime?: string;
     maxBookingHours?: string;
@@ -69,7 +78,10 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
       setCurrentSharespace({
         id: sharedspace.id,
         nameCode: sharedspace.nameCode || '',
-        description: sharedspace.description || '',
+        nameEn: sharedspace.nameEn || '',
+        nameJp: sharedspace.nameJp || '',
+        descriptionEn: sharedspace.descriptionEn || '',
+        descriptionJp: sharedspace.descriptionJp || '',
         startDayTime: sharedspace.startDayTime || '8:00',
         endDayTime: sharedspace.endDayTime || '23:00',
         maxBookingHours: sharedspace.maxBookingHours || 0,
@@ -79,7 +91,10 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
       setIsUpdate(false);
       setCurrentSharespace({
         nameCode: '',
-        description: '',
+        nameEn: '',
+        nameJp: '',
+        descriptionEn: '',
+        descriptionJp: '',
         startDayTime: '8:00',
         endDayTime: '23:00',
         maxBookingHours: 0,
@@ -92,7 +107,10 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
   const validateFields = () => {
     const errors: {
       nameCode?: string;
-      description?: string;
+      nameEn?: string;
+      nameJp?: string;
+      descriptionEn?: string;
+      descriptionJp?: string;
       startDayTime?: string;
       endDayTime?: string;
       maxBookingHours?: string;
@@ -124,7 +142,10 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
         {
           id: currentSharespace.id,
           nameCode: currentSharespace.nameCode.trim(),
-          description: currentSharespace.description?.trim(),
+          nameEn: currentSharespace.nameEn.trim(),
+          nameJp: currentSharespace.nameJp.trim(),
+          descriptionEn: currentSharespace.descriptionEn?.trim(),
+          descriptionJp: currentSharespace.descriptionJp?.trim(),
           startDayTime: currentSharespace.startDayTime,
           endDayTime: currentSharespace.endDayTime,
           maxBookingHours: currentSharespace.maxBookingHours,
@@ -153,7 +174,10 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
         `admin/sharedspace`,
         {
           nameCode: currentSharespace.nameCode.trim(),
-          description: currentSharespace.description?.trim(),
+          nameEn: currentSharespace.nameEn.trim(),
+          nameJp: currentSharespace.nameJp.trim(),
+          descriptionEn: currentSharespace.descriptionEn?.trim(),
+          descriptionJp: currentSharespace.descriptionJp?.trim(),
           startDayTime: currentSharespace.startDayTime,
           endDayTime: currentSharespace.endDayTime,
           maxBookingHours: currentSharespace.maxBookingHours,
@@ -191,11 +215,38 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
         />
         <TextField
           fullWidth
-          label={t('sharedspace.description')}
-          value={currentSharespace.description}
-          onChange={(e) => handleChange('description', e.target.value)}
-          error={!!validationErrors.description}
-          helperText={validationErrors.description}
+          label={t('sharedspace.name.en')}
+          value={currentSharespace.nameEn}
+          onChange={(e) => handleChange('nameEn', e.target.value)}
+          error={!!validationErrors.nameEn}
+          helperText={validationErrors.nameEn}
+          sx={{ mb: 1 }}
+        />
+        <TextField
+          fullWidth
+          label={t('sharedspace.name.jp')}
+          value={currentSharespace.nameJp}
+          onChange={(e) => handleChange('nameJp', e.target.value)}
+          error={!!validationErrors.nameJp}
+          helperText={validationErrors.nameJp}
+          sx={{ mb: 1 }}
+        />
+        <TextField
+          fullWidth
+          label={t('sharedspace.description.en')}
+          value={currentSharespace.descriptionEn}
+          onChange={(e) => handleChange('descriptionEn', e.target.value)}
+          error={!!validationErrors.descriptionEn}
+          helperText={validationErrors.descriptionEn}
+          sx={{ mb: 1 }}
+        />
+        <TextField
+          fullWidth
+          label={t('sharedspace.description.jp')}
+          value={currentSharespace.descriptionJp}
+          onChange={(e) => handleChange('descriptionJp', e.target.value)}
+          error={!!validationErrors.descriptionJp}
+          helperText={validationErrors.descriptionJp}
           sx={{ mb: 1 }}
         />
         <TextField

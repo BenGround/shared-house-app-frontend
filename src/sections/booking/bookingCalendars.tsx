@@ -16,7 +16,7 @@ type BookingCalendarsProps = {
 const BookingCalendars: React.FC<BookingCalendarsProps> = ({
   sharedSpaceNameCode,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { sharedSpaces, error } = useShareSpaces();
   const navigate = useNavigate();
 
@@ -68,7 +68,7 @@ const BookingCalendars: React.FC<BookingCalendarsProps> = ({
             {sharedSpaces.map((space) => (
               <Tab
                 key={space.id}
-                label={t(space.nameCode)}
+                label={i18n.language === 'en' ? space.nameEn : space.nameJp}
                 sx={{
                   textTransform: 'capitalize',
                   textShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)',

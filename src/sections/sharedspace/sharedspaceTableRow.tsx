@@ -63,7 +63,13 @@ export function SharedspaceTableRow({
           </Box>
         </TableCell>
 
-        <TableCell>{row.description}</TableCell>
+        <TableCell>{row.nameEn}</TableCell>
+
+        <TableCell>{row.nameJp}</TableCell>
+
+        <TableCell>{row.descriptionEn}</TableCell>
+
+        <TableCell>{row.descriptionJp}</TableCell>
 
         <TableCell>{row.startDayTime}</TableCell>
 

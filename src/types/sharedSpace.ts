@@ -1,7 +1,10 @@
 export interface SharedSpace {
   id: number;
   nameCode: string;
-  description: string | null;
+  nameEn: string;
+  nameJp: string;
+  descriptionEn: string | null;
+  descriptionJp: string | null;
   startDayTime: string;
   endDayTime: string;
   maxBookingHours: number;
