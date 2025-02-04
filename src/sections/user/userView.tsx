@@ -27,6 +27,7 @@ import { CustomTableToolbar } from 'src/utils/table/tableToolbar';
 import { emptyRows, getComparator } from 'src/utils/table/utils';
 import UserEditModal, { UserPropsModal } from 'src/components/modals/userModal';
 import LoadingSpinner from 'src/components/loadingSpinner/loadingSpinner';
+import { isTabletWindows } from 'src/utils/utils';
 
 const SimpleBarWrapper = styled.div`
   height: 100% !important;
@@ -46,6 +47,7 @@ const User: React.FC = () => <UserView />;
 function UserView() {
   const table = useTable();
   const { t } = useTranslation();
+  const isTablet = isTabletWindows();
 
   const [users, setUsers] = useState<UserProps[]>([]);
   const [filterRoomNumber, setFilterRoomNumber] = useState('');
@@ -163,6 +165,20 @@ function UserView() {
     setOpenModal(false);
   };
 
+  const headLabels = isTablet
+    ? [
+        { id: 'roomNumber', label: t('room.number') },
+        { id: '', label: '' },
+      ]
+    : [
+        { id: 'roomNumber', label: t('room.number') },
+        { id: 'username', label: t('username') },
+        { id: 'email', label: t('email') },
+        { id: 'isActive', label: t('active'), align: 'center' as const },
+        { id: 'isAdmin', label: t('admin') },
+        { id: '', label: '' },
+      ];
+
   return (
     <DashboardContent>
       {isLoading ? (
@@ -198,9 +214,18 @@ function UserView() {
             />
 
             <SimpleBarWrapper>
-              <TableContainer sx={{ maxHeight: 500, overflow: 'auto' }}>
+              <TableContainer>
                 <SimpleBar autoHide={true}>
-                  <Table sx={{ minWidth: 800 }}>
+                  <Table
+                    sx={{
+                      tableLayout: 'fixed',
+                      width: '100%',
+                      borderCollapse: 'collapse',
+                      '& td, & th': {
+                        wordBreak: 'break-word',
+                      },
+                    }}
+                  >
                     <CustomTableHead
                       order={table.order}
                       orderBy={table.orderBy}
@@ -213,14 +238,7 @@ function UserView() {
                           users.map((user) => user.roomNumber)
                         )
                       }
-                      headLabel={[
-                        { id: 'roomNumber', label: t('room.number') },
-                        { id: 'username', label: t('username') },
-                        { id: 'email', label: t('email') },
-                        { id: 'isActive', label: t('active'), align: 'center' },
-                        { id: 'isAdmin', label: t('admin') },
-                        { id: '', label: '' },
-                      ]}
+                      headLabel={headLabels}
                     />
                     <TableBody>
                       {dataFiltered
@@ -232,6 +250,7 @@ function UserView() {
                           <UserTableRow
                             key={row.roomNumber}
                             row={row}
+                            minimizeMode={isTablet}
                             selected={table.selected.includes(row.roomNumber)}
                             onSelectRow={() =>
                               table.onSelectRow(row.roomNumber)

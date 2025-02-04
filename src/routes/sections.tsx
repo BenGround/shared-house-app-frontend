@@ -22,7 +22,7 @@ export const ProfilePage = lazy(() => import('../pages/profile'));
 const renderFallback = <LoadingSpinner translationKey="loading.routes" />;
 
 function Router() {
-  const { isAuthenticated, user } = useUser();
+  const { isAuthenticated, user, authCallDone } = useUser();
   const { sharedSpaces, isLoading } = useSharedSpaces();
 
   const routes = useRoutes([
@@ -104,7 +104,7 @@ function Router() {
     },
   ]);
 
-  if (isLoading) {
+  if (!authCallDone || isLoading) {
     return renderFallback;
   }
 

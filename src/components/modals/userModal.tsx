@@ -17,6 +17,7 @@ import { toast } from 'react-toastify';
 import { handleError } from 'src/utils/errorHandler';
 import { LoadingButton } from '@mui/lab';
 import { UserProps } from 'src/sections/user/userTableRow';
+import { validateUsername } from 'src/utils/dataValidation';
 
 interface UserEditModalProps {
   open: boolean;
@@ -88,14 +89,25 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
     const errors: { username?: string; email?: string; roomNumber?: string } =
       {};
 
-    if (!currentUser.email.trim()) {
-      errors.email = t('validation.email.required');
+    const email = currentUser.email.trim();
+
+    if (!email) {
+      errors.email = t('errors.user.email.required');
+    } else if (email.length < 3 || email.length > 100) {
+      errors.email = t('errors.user.email.invalid.length');
     } else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(currentUser.email)) {
-      errors.email = t('validation.email.invalid');
+      errors.email = t('errors.user.email.invalid');
     }
 
     if (!isUpdate && currentUser.roomNumber === null) {
       errors.roomNumber = t('validation.roomNumber.required');
+    }
+
+    if (
+      currentUser.username !== '' &&
+      !validateUsername(currentUser.username)
+    ) {
+      errors.username = t('profile.username.validationMessage');
     }
 
     setValidationErrors(errors);

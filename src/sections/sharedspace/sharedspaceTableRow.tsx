@@ -16,6 +16,7 @@ import { SharedSpace } from 'src/types/sharedSpace';
 type SharespaceTableRowProps = {
   row: SharedSpace;
   selected: boolean;
+  minimizeMode: boolean;
   onSelectRow: () => void;
   onEditRow: (sharedSpace: SharedSpace) => void;
   onDeleteRow: (nameCode: string) => void;
@@ -24,6 +25,7 @@ type SharespaceTableRowProps = {
 export function SharedspaceTableRow({
   row,
   selected,
+  minimizeMode,
   onSelectRow,
   onEditRow,
   onDeleteRow,
@@ -63,21 +65,18 @@ export function SharedspaceTableRow({
           </Box>
         </TableCell>
 
-        <TableCell>{row.nameEn}</TableCell>
-
-        <TableCell>{row.nameJp}</TableCell>
-
-        <TableCell>{row.descriptionEn}</TableCell>
-
-        <TableCell>{row.descriptionJp}</TableCell>
-
-        <TableCell>{row.startDayTime}</TableCell>
-
-        <TableCell>{row.endDayTime}</TableCell>
-
-        <TableCell>{row.maxBookingHours}</TableCell>
-
-        <TableCell>{row.maxBookingByUser}</TableCell>
+        {!minimizeMode && (
+          <>
+            <TableCell>{row.nameEn}</TableCell>
+            <TableCell>{row.nameJp}</TableCell>
+            <TableCell>{row.descriptionEn}</TableCell>
+            <TableCell>{row.descriptionJp}</TableCell>
+            <TableCell>{row.startDayTime}</TableCell>
+            <TableCell>{row.endDayTime}</TableCell>
+            <TableCell>{row.maxBookingHours}</TableCell>
+            <TableCell>{row.maxBookingByUser}</TableCell>
+          </>
+        )}
 
         <TableCell align="right">
           <IconButton onClick={handleOpenPopover} aria-label="Open menu">

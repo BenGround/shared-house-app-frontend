@@ -15,7 +15,7 @@ import {
   PasswordRule,
   passwordRules,
   validatePassword,
-} from 'src/utils/passwordValidation';
+} from 'src/utils/dataValidation';
 
 const LoadingButton = lazy(() => import('@mui/lab/LoadingButton'));
 

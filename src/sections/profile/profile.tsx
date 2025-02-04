@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { LoadingButton } from '@mui/lab';
 import { validateFile } from 'src/utils/imgUtils';
+import { validateUsername } from 'src/utils/dataValidation';
 
 const Profile: React.FC = () => {
   return <ProfileView />;
@@ -32,12 +33,6 @@ export function ProfileView() {
 
   const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
-  };
-
-  const validateUsername = (username: string): boolean => {
-    const usernameRegex =
-      /^[a-zA-Z0-9\s_\u3040-\u30FF\u4E00-\u9FFF\u00C0-\u00FF]{3,25}$/;
-    return usernameRegex.test(username);
   };
 
   const handleProfilePictureChange = async (

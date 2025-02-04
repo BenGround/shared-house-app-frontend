@@ -31,3 +31,9 @@ export const passwordRules: PasswordRule[] = [
 export const validatePassword = (password: string) => {
   return passwordRules.map((rule) => rule.test(password));
 };
+
+export const validateUsername = (username: string): boolean => {
+  const usernameRegex =
+    /^[a-zA-Z0-9\s_\u3040-\u30FF\u4E00-\u9FFF\u00C0-\u00FF]{3,25}$/;
+  return usernameRegex.test(username);
+};

@@ -19,7 +19,10 @@ interface SharedSpaceEditModalProps {
   open: boolean;
   onClose: () => void;
   sharedspace: SharedSpace | null;
-  onSharedspaceUpdated: (sharedspaceProps: SharedspacePropsModal) => void;
+  onSharedspaceUpdated: (
+    sharedspaceProps: SharedspacePropsModal,
+    nameCode: string
+  ) => void;
   onSharedspaceCreated?: (sharedspace: SharedSpace) => void;
 }
 
@@ -58,6 +61,9 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
       maxBookingByUser: 0,
     });
 
+  const [nameCode, setNameCode] = useState<string | undefined>(
+    sharedspace?.nameCode
+  );
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [validationErrors, setValidationErrors] = useState<{
@@ -74,6 +80,7 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
 
   useEffect(() => {
     if (sharedspace) {
+      setNameCode(sharedspace.nameCode);
       setIsUpdate(true);
       setCurrentSharespace({
         id: sharedspace.id,
@@ -117,6 +124,83 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
       maxBookingByUser?: string;
     } = {};
 
+    const timeRegex = /^(?:[01]?\d|2[0-3]):([0-5]\d)$/;
+    const namesRegex = /^[a-zA-Z0-9\s_\u3040-\u30FF\u4E00-\u9FFF]{3,25}$/;
+    const nameCodeRegex = /^[a-zA-Z0-9_]{3,25}$/;
+
+    const nameCode = currentSharespace.nameCode.trim();
+    if (!nameCodeRegex.test(nameCode)) {
+      errors.nameCode = t('errors.sharedspace.name.code.invalid');
+    }
+
+    const nameEn = currentSharespace.nameEn.trim();
+    if (!namesRegex.test(nameEn)) {
+      errors.nameEn = t('errors.sharedspace.name.invalid');
+    }
+
+    const nameJp = currentSharespace.nameJp.trim();
+    if (!namesRegex.test(nameJp)) {
+      errors.nameJp = t('errors.sharedspace.name.invalid');
+    }
+
+    const descriptionEn = currentSharespace.descriptionEn?.trim();
+    if (
+      descriptionEn &&
+      (descriptionEn.length < 5 || descriptionEn.length > 300)
+    ) {
+      errors.descriptionEn = t('errors.sharedspace.descrption.invalid');
+    }
+
+    const descriptionJp = currentSharespace.descriptionJp?.trim();
+    if (
+      descriptionJp &&
+      (descriptionJp.length < 5 || descriptionJp.length > 300)
+    ) {
+      errors.descriptionJp = t('errors.sharedspace.descrption.invalid');
+    }
+
+    if (
+      currentSharespace.maxBookingHours < 1 ||
+      currentSharespace.maxBookingHours > 24
+    ) {
+      errors.maxBookingHours = t(
+        'errors.sharedspace.max.booking.hours.invalid.length'
+      );
+    }
+
+    if (
+      currentSharespace.maxBookingByUser < 1 ||
+      currentSharespace.maxBookingByUser > 100
+    ) {
+      errors.maxBookingByUser = t(
+        'errors.sharedspace.max.booking.by.user.invalid.length'
+      );
+    }
+
+    if (!timeRegex.test(currentSharespace.startDayTime)) {
+      errors.startDayTime = t('errors.sharedspace.day.time.invalid');
+    }
+
+    if (!timeRegex.test(currentSharespace.endDayTime)) {
+      errors.endDayTime = t('errors.sharedspace.day.time.invalid');
+    }
+
+    const [startHour, startMinute] = currentSharespace.startDayTime
+      .split(':')
+      .map(Number);
+    const [endHour, endMinute] = currentSharespace.endDayTime
+      .split(':')
+      .map(Number);
+
+    const startTotalMinutes = startHour * 60 + startMinute;
+    const endTotalMinutes = endHour * 60 + endMinute;
+
+    if (startTotalMinutes >= endTotalMinutes) {
+      errors.startDayTime = t(
+        'errors.sharedspace.sharedspace.start.end.day.time.invalid'
+      );
+    }
+
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -133,11 +217,16 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
   };
 
   const handleUpdateSharedspace = async () => {
+    if (!nameCode) {
+      toast.error(t('errors.occured'));
+      onClose();
+      return;
+    }
     if (!validateFields()) return;
 
     setLoading(true);
     try {
-      await axiosInstance.put(
+      const response = await axiosInstance.put(
         `admin/sharedspace`,
         {
           id: currentSharespace.id,
@@ -155,9 +244,14 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
           withCredentials: true,
         }
       );
-      toast.success(t('sharedspace.updated.success'));
-      onSharedspaceUpdated(currentSharespace);
-      onClose();
+
+      if (response.status === 204) {
+        toast.success(t('sharedspace.updated.success'));
+        onSharedspaceUpdated(currentSharespace, nameCode);
+        onClose();
+      } else {
+        throw new Error();
+      }
     } catch (error) {
       handleError(error);
     } finally {
@@ -187,9 +281,14 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
           withCredentials: true,
         }
       );
-      toast.success(t('sharedspace.created.success'));
-      if (onSharedspaceCreated) onSharedspaceCreated(response.data.data);
-      onClose();
+
+      if (response.status === 201) {
+        toast.success(t('sharedspace.created.success'));
+        if (onSharedspaceCreated) onSharedspaceCreated(response.data.data);
+        onClose();
+      } else {
+        throw new Error();
+      }
     } catch (error) {
       handleError(error);
     } finally {

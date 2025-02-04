@@ -6,6 +6,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { useSharedSpaces } from 'src/contexts/shareSpacesContext';
 import { CSSTransition } from 'react-transition-group';
 import 'src/css/transition.css';
+import { isMobileWindows } from 'src/utils/utils';
 
 const BookingCalendar = React.lazy(() => import('./bookingCalendar'));
 
@@ -19,6 +20,8 @@ const BookingCalendars: React.FC<BookingCalendarsProps> = ({
   const { t, i18n } = useTranslation();
   const { sharedSpaces, error } = useSharedSpaces();
   const navigate = useNavigate();
+
+  const isMobile = isMobileWindows();
 
   const [loading, setLoading] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
@@ -63,6 +66,7 @@ const BookingCalendars: React.FC<BookingCalendarsProps> = ({
           <Tabs
             value={selectedTabIndex >= 0 ? selectedTabIndex : 0}
             onChange={handleTabChange}
+            variant={isMobile ? 'scrollable' : 'standard'}
             aria-label="shared space booking tabs"
           >
             {sharedSpaces.map((space) => (

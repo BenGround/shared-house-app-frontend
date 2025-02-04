@@ -29,6 +29,7 @@ import { TableEmptyRows } from 'src/utils/table/tableEmptyRows';
 import { CustomTableHead } from 'src/utils/table/tableHead';
 import { CustomTableToolbar } from 'src/utils/table/tableToolbar';
 import { useSharedSpaces } from 'src/contexts/shareSpacesContext';
+import { isTabletWindows } from 'src/utils/utils';
 
 const SimpleBarWrapper = styled.div`
   height: 100% !important;
@@ -48,6 +49,7 @@ const Sharedspace: React.FC = () => <SharedspaceView />;
 function SharedspaceView() {
   const table = useTable();
   const { t } = useTranslation();
+  const isTablet = isTabletWindows();
 
   const { sharedSpaces, updateSharedSpaces } = useSharedSpaces();
   const [tableSharedSpaces, setSharedspaces] =
@@ -62,13 +64,14 @@ function SharedspaceView() {
   }, [tableSharedSpaces]);
 
   const updateSharedspaceFromList = (
-    sharedSpaceProps: SharedspacePropsModal
+    sharedSpaceProps: SharedspacePropsModal,
+    nameCode: string
   ) => {
     setSharedspaces((sharedspaces) =>
-      sharedspaces.map((u) =>
-        u.nameCode === sharedSpaceProps.nameCode
+      sharedspaces.map((actualSharedSpace) =>
+        actualSharedSpace.nameCode === nameCode
           ? {
-              ...u,
+              ...actualSharedSpace,
               nameCode: sharedSpaceProps.nameCode,
               nameEn: sharedSpaceProps.nameEn,
               nameJp: sharedSpaceProps.nameJp,
@@ -79,7 +82,7 @@ function SharedspaceView() {
               startDayTime: sharedSpaceProps.startDayTime,
               endDayTime: sharedSpaceProps.endDayTime,
             }
-          : u
+          : actualSharedSpace
       )
     );
   };
@@ -166,6 +169,42 @@ function SharedspaceView() {
     setOpenModal(false);
   };
 
+  const headLabels = isTablet
+    ? [
+        { id: 'nameCode', label: t('sharedspace.name.code') },
+        { id: '', label: '' },
+      ]
+    : [
+        { id: 'nameCode', label: t('sharedspace.name.code') },
+        { id: 'nameEn', label: t('sharedspace.name.en') },
+        { id: 'nameJp', label: t('sharedspace.name.jp') },
+        {
+          id: 'descriptionEn',
+          label: t('sharedspace.description.en'),
+        },
+        {
+          id: 'descriptionJp',
+          label: t('sharedspace.description.jp'),
+        },
+        {
+          id: 'startDayTime',
+          label: t('sharedspace.start.day.time'),
+        },
+        {
+          id: 'endDayTime',
+          label: t('sharedspace.end.day.time'),
+        },
+        {
+          id: 'maxBookingHours',
+          label: t('sharedspace.max.booking.hours'),
+        },
+        {
+          id: 'maxBookingByUser',
+          label: t('sharedspace.max.booking.by.user'),
+        },
+        { id: '', label: '' },
+      ];
+
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
@@ -197,9 +236,18 @@ function SharedspaceView() {
         />
 
         <SimpleBarWrapper>
-          <TableContainer sx={{ maxHeight: 500, overflow: 'auto' }}>
+          <TableContainer>
             <SimpleBar autoHide={true}>
-              <Table sx={{ minWidth: 800 }}>
+              <Table
+                sx={{
+                  tableLayout: 'fixed',
+                  width: '100%',
+                  borderCollapse: 'collapse',
+                  '& td, & th': {
+                    wordBreak: 'break-word',
+                  },
+                }}
+              >
                 <CustomTableHead
                   order={table.order}
                   orderBy={table.orderBy}
@@ -214,36 +262,7 @@ function SharedspaceView() {
                       )
                     )
                   }
-                  headLabel={[
-                    { id: 'nameCode', label: t('sharedspace.name.code') },
-                    { id: 'nameEn', label: t('sharedspace.name.en') },
-                    { id: 'nameJp', label: t('sharedspace.name.jp') },
-                    {
-                      id: 'descriptionEn',
-                      label: t('sharedspace.description.en'),
-                    },
-                    {
-                      id: 'descriptionJp',
-                      label: t('sharedspace.description.jp'),
-                    },
-                    {
-                      id: 'startDayTime',
-                      label: t('sharedspace.start.day.time'),
-                    },
-                    {
-                      id: 'endDayTime',
-                      label: t('sharedspace.end.day.time'),
-                    },
-                    {
-                      id: 'maxBookingHours',
-                      label: t('sharedspace.max.booking.hours'),
-                    },
-                    {
-                      id: 'maxBookingByUser',
-                      label: t('sharedspace.max.booking.by.user'),
-                    },
-                    { id: '', label: '' },
-                  ]}
+                  headLabel={headLabels}
                 />
                 <TableBody>
                   {dataFiltered
@@ -255,6 +274,7 @@ function SharedspaceView() {
                       <SharedspaceTableRow
                         key={row.nameCode}
                         row={row}
+                        minimizeMode={isTablet}
                         selected={table.selected.includes(row.nameCode)}
                         onSelectRow={() => table.onSelectRow(row.nameCode)}
                         onEditRow={(sharedSpace) =>
@@ -298,8 +318,8 @@ function SharedspaceView() {
         open={openModal}
         onClose={handleCloseModal}
         sharedspace={selectedSharedspace}
-        onSharedspaceUpdated={(sharedspaceProps) =>
-          updateSharedspaceFromList(sharedspaceProps)
+        onSharedspaceUpdated={(sharedspaceProps, nameCode) =>
+          updateSharedspaceFromList(sharedspaceProps, nameCode)
         }
         onSharedspaceCreated={(sharedspaceProps) =>
           addSharedspaceInList(sharedspaceProps)

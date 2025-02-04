@@ -29,6 +29,7 @@ import LoadingSpinner from 'src/components/loadingSpinner/loadingSpinner';
 import { io, Socket } from 'socket.io-client';
 import { Iconify } from 'src/components/iconify';
 import { validateFile } from 'src/utils/imgUtils';
+import { isMobileWindows } from 'src/utils/utils';
 import { useSharedSpaces } from 'src/contexts/shareSpacesContext';
 import { replaceOrAddBooking, updateTimeDate } from './booking.helper';
 
@@ -56,7 +57,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
   const theme = useTheme();
 
   const socketRef = useRef<Socket | null>(null);
-  const isMobile = window.innerWidth <= 768;
+  const isMobile = isMobileWindows();
   const isEn = i18n.language === 'en';
   const language = isEn ? 'en-US' : 'ja-JP';
 

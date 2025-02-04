@@ -42,9 +42,9 @@ export function NavDesktop({
         pt: 2.5,
         px: 2.5,
         top: 0,
-        paddingTop: 0,
         left: 0,
-        height: 1,
+        paddingTop: 0,
+        height: '100vh',
         display: 'none',
         position: 'fixed',
         flexDirection: 'column',
@@ -55,12 +55,15 @@ export function NavDesktop({
           theme.vars.palette.grey['500Channel'],
           0.12
         )})`,
+        overflow: 'hidden',
         [theme.breakpoints.up(layoutQuery)]: {
           display: 'flex',
         },
       }}
     >
-      <NavContent data={data} />
+      <Scrollbar fillContent>
+        <NavContent data={data} />
+      </Scrollbar>
     </Box>
   );
 }
@@ -76,13 +79,17 @@ export function NavMobile({
       onClose={onClose}
       sx={{
         [`& .${drawerClasses.paper}`]: {
-          overflow: 'unset',
+          overflow: 'hidden',
           bgcolor: 'var(--layout-nav-bg)',
           width: 'var(--layout-nav-mobile-width)',
+          display: 'flex',
+          flexDirection: 'column',
         },
       }}
     >
-      <NavContent data={data} onNavItemClick={onClose} />
+      <Scrollbar fillContent>
+        <NavContent data={data} onNavItemClick={onClose} />
+      </Scrollbar>
     </Drawer>
   );
 }
@@ -104,6 +111,8 @@ export function NavContent({ data, onNavItemClick }: NavContentProps) {
           display="flex"
           flex="1 1 auto"
           flexDirection="column"
+          overflow="auto"
+          maxHeight="100vh"
         >
           <Box
             component="ul"
@@ -161,7 +170,7 @@ export function NavContent({ data, onNavItemClick }: NavContentProps) {
                       gap={2}
                       flexGrow={1}
                     >
-                      <Iconify icon={item.iconName} width={20} height={20} />{' '}
+                      <Iconify icon={item.iconName} width={20} height={20} />
                       <Typography
                         variant="body2"
                         sx={{

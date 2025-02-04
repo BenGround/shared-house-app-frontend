@@ -30,6 +30,7 @@ export type UserProps = {
 type UserTableRowProps = {
   row: UserProps;
   selected: boolean;
+  minimizeMode: boolean;
   onSelectRow: () => void;
   onEditRow: (user: UserProps) => void;
   onDeleteRow: (roomNumber: number) => void;
@@ -38,6 +39,7 @@ type UserTableRowProps = {
 export function UserTableRow({
   row,
   selected,
+  minimizeMode,
   onSelectRow,
   onEditRow,
   onDeleteRow,
@@ -94,37 +96,37 @@ export function UserTableRow({
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
-
         <TableCell component="th" scope="row">
           {row.roomNumber}
         </TableCell>
 
-        <TableCell>
-          <Box display="flex" alignItems="center" gap={2}>
-            <Avatar alt={row.username} src={row.profilePicture} />
-            {row.username}
-          </Box>
-        </TableCell>
-
-        <TableCell>{row.email}</TableCell>
-
-        <TableCell>
-          <Label color={row.isActive ? 'success' : 'error'}>
-            {row.isActive ? t('active') : t('inactive')}
-          </Label>
-        </TableCell>
-
-        <TableCell align="center">
-          {row.isAdmin ? (
-            <Iconify
-              width={22}
-              icon="solar:check-circle-bold"
-              sx={{ color: 'success.main' }}
-            />
-          ) : (
-            '-'
-          )}
-        </TableCell>
+        {!minimizeMode && (
+          <>
+            <TableCell>
+              <Box display="flex" alignItems="center" gap={2}>
+                <Avatar alt={row.username} src={row.profilePicture} />
+                {row.username}
+              </Box>
+            </TableCell>
+            <TableCell>{row.email}</TableCell>
+            <TableCell>
+              <Label color={row.isActive ? 'success' : 'error'}>
+                {row.isActive ? t('active') : t('inactive')}
+              </Label>
+            </TableCell>
+            <TableCell align="center">
+              {row.isAdmin ? (
+                <Iconify
+                  width={22}
+                  icon="solar:check-circle-bold"
+                  sx={{ color: 'success.main' }}
+                />
+              ) : (
+                '-'
+              )}
+            </TableCell>
+          </>
+        )}
 
         <TableCell align="right">
           <IconButton onClick={handleOpenPopover} aria-label="Open menu">
