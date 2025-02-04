@@ -64,7 +64,7 @@ export function CreatePasswordView() {
         confirmPassword,
       });
       toast.success(t('password.created'));
-      router.push(`/sign-in?roomNumber=${response.data.roomNumber}`);
+      router.push(`/sign-in?roomNumber=${response.data.data}`);
     } catch (err) {
       setError(t('password.create.error'));
       setPassword('');

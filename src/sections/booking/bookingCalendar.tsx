@@ -139,7 +139,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
       });
 
       setBookings((prevBookings) => {
-        const combined = [...prevBookings, ...response.data];
+        const combined = [...prevBookings, ...response.data?.data];
         const uniqueBookings = Array.from(
           new Map(combined.map((booking) => [booking.id, booking])).values()
         );
@@ -163,7 +163,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
         }
       );
       setRemainingBookings(
-        Math.max(0, sharedSpace.maxBookingByUser - response.data.count)
+        Math.max(0, sharedSpace.maxBookingByUser - response.data?.data)
       );
     } catch (error: Error | any) {
       handleError(error);
@@ -250,7 +250,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
         { withCredentials: true }
       );
 
-      const { booking } = response.data;
+      const booking = response.data?.data;
 
       if (response.status === 201) {
         toast.success(t('bookings.create.success'));
@@ -319,7 +319,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
       const response = await axiosInstance.put(
         'bookings/update',
         {
-          bookingId: booking.id,
+          id: booking.id,
           sharedSpaceId: sharedSpace.id,
           startDate: newStart.toISOString(),
           endDate: newEnd.toISOString(),
@@ -545,7 +545,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
               <IconButton
                 aria-label="remove-image"
                 onClick={handleSharedSpaceImageDelete}
-                disabled={disabledImgButttons}
+                disabled={disabledImgButttons || !sharedSpace.picture}
                 sx={{ color: isImageLoaded ? 'white' : 'gray' }}
                 component="span"
               >

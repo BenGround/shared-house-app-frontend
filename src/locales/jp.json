@@ -83,6 +83,7 @@
   "errors.booking.error.delete": "予約の削除中にエラーが発生しました",
   "errors.booking.other.user": "自分の予約のみ更新できます",
   "errors.booking.cannotBookInPast": "過去には予約できません",
+	"errors.booking.outside.hours": "共有スペースの営業時間外での予約",
   "errors.booking.error": "予約処理中にエラーが発生しました",
   "errors.sharespace.creation": "シェアスペースの作成中にエラーが発生しました",
   "errors.sharedspace": "シェアスペースの取得エラー",
@@ -161,5 +162,6 @@
   "sharedspace.max.booking.hours": "最大予約時間",
   "sharedspace.max.booking.by.user": "ユーザーごとの最大予約数",
   "sharedspace.confirmDelete": "これらの共有スペースを削除しますか？ 名前コード: {{nameCodes}}",
-  "table.search.by.name.code": "名前コードで検索..."
+  "table.search.by.name.code": "名前コードで検索...",
+	"email.sent.successfully": "メールが正常に送信されました"
 }

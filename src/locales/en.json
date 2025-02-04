@@ -83,6 +83,7 @@
 	"errors.booking.error.delete": "Error deleting booking",
 	"errors.booking.other.user": "You can only update you bookings",
 	"errors.booking.cannotBookInPast": "You cannot book in the past",
+	"errors.booking.outside.hours": "Booking outside of working hours of the shared place",
 	"errors.booking.error": "Error during booking proccess",
 	"errors.sharespace.creation": "Some error occurred while creating the shared space",
 	"errors.sharedspace": "Error retrieving shared spaces",
@@ -160,5 +161,6 @@
 	"sharedspace.max.booking.hours": "Max hours booking",
 	"sharedspace.max.booking.by.user": "Max booking by user",
 	"sharedspace.confirmDelete": "Do you want to delete these/this sharedspace(s)? Name code(s): {{nameCodes}}",
-	"table.search.by.name.code": "Search by name code..."
+	"table.search.by.name.code": "Search by name code...",
+	"email.sent.successfully": "Email sent successfully"
 }

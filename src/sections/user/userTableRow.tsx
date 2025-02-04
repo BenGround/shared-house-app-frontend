@@ -15,6 +15,7 @@ import { Label } from 'src/components/label';
 import axiosInstance from 'src/settings/axiosInstance';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
+import { handleError } from 'src/utils/errorHandler';
 
 export type UserProps = {
   id: string;
@@ -58,15 +59,28 @@ export function UserTableRow({
     onEditRow(row);
   };
 
-  const handleSendEmailPassword = () => {
+  const handleSendEmailPassword = async () => {
     setPopoverAnchor(null);
     if (!row.email) {
       toast.warning('user.email.not.set');
       return;
     }
-    axiosInstance.get(`admin/sendPasswordEmail/${row.id}`, {
-      withCredentials: true,
-    });
+    try {
+      const response = await axiosInstance.get(
+        `admin/sendPasswordEmail/${row.id}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success(t('email.sent.successfully'));
+      } else {
+        throw new Error();
+      }
+    } catch (error) {
+      handleError(error);
+    }
   };
 
   const handleDelete = () => {

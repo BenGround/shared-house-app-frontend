@@ -118,7 +118,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
 
     setLoading(true);
     try {
-      await axiosInstance.put(
+      const response = await axiosInstance.put(
         `admin/user`,
         {
           id: currentUser.id,
@@ -131,9 +131,14 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
           withCredentials: true,
         }
       );
-      toast.success(t('user.updated.success'));
-      onUserUpdated(currentUser);
-      onClose();
+
+      if (response.status === 204) {
+        toast.success(t('user.updated.success'));
+        onUserUpdated(currentUser);
+        onClose();
+      } else {
+        throw new Error();
+      }
     } catch (error) {
       handleError(error);
     } finally {
@@ -159,9 +164,13 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
           withCredentials: true,
         }
       );
-      toast.success(t('user.created.success'));
-      onUserCreated(response.data);
-      onClose();
+      if (response.status === 201) {
+        toast.success(t('user.created.success'));
+        onUserCreated(response.data.data);
+        onClose();
+      } else {
+        throw new Error();
+      }
     } catch (error) {
       handleError(error);
     } finally {

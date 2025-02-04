@@ -19,12 +19,6 @@ interface User {
   profilePicture: string | undefined;
 }
 
-interface LoginResponse {
-  status: boolean;
-  message: string;
-  user: User;
-}
-
 interface UserContextType {
   authCallDone: boolean;
   isAuthenticated: boolean;
@@ -46,7 +40,7 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const login = async (roomNumber: string, password: string) => {
     try {
-      const response = await axiosInstance.post<LoginResponse>(
+      const response = await axiosInstance.post(
         '/user/login',
         {
           roomNumber,
@@ -57,9 +51,9 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         }
       );
 
-      if (response.data.status) {
+      if (response.data.data) {
         const { username, roomNumber, email, isAdmin, profilePicture } =
-          response.data.user;
+          response.data.data;
         setUser({ username, roomNumber, email, isAdmin, profilePicture });
         setIsAuthenticated(true);
         const toast = await loadToast();
@@ -93,8 +87,8 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         withCredentials: true,
       });
 
-      if (response.data.loggedIn) {
-        setUser(response.data.user);
+      if (response.data.data) {
+        setUser(response.data.data);
         setIsAuthenticated(true);
       } else {
         setIsAuthenticated(false);
@@ -117,14 +111,18 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }
 
     try {
-      await axiosInstance.put(
+      const response = await axiosInstance.put(
         '/user/update',
         { username },
         { withCredentials: true }
       );
-      setUser((prevUser) => ({ ...prevUser!, username }));
-      const toast = await loadToast();
-      toast.success(t('update.success'));
+      if (response.status === 204) {
+        setUser((prevUser) => ({ ...prevUser!, username }));
+        const toast = await loadToast();
+        toast.success(t('update.success'));
+      } else {
+        throw new Error();
+      }
     } catch {
       const toast = await loadToast();
       toast.error(t('update.failed'));
@@ -152,11 +150,13 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       if (response.status === 200) {
         setUser((prevUser) => ({
           ...prevUser!,
-          profilePicture: response.data.profilePicture,
+          profilePicture: response.data.data,
         }));
         const toast = await loadToast();
         toast.success(t('update.success'));
         return true;
+      } else {
+        throw new Error();
       }
     } catch (error) {
       const toast = await loadToast();
@@ -184,6 +184,8 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         const toast = await loadToast();
         toast.success(t('update.success'));
         return true;
+      } else {
+        throw new Error();
       }
     } catch (error) {
       const toast = await loadToast();

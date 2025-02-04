@@ -51,7 +51,7 @@ const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
       const response = await axiosInstance.get('sharedspace/list', {
         withCredentials: true,
       });
-      setSharedSpaces(response.data);
+      setSharedSpaces(response.data?.data);
     } catch (error) {
       setError(handleError(error));
     } finally {
@@ -87,7 +87,7 @@ const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
             if (sharedspace.id === id) {
               return {
                 ...sharedspace,
-                picture: response.data?.picture,
+                picture: response.data?.data,
               };
             }
             return sharedspace;

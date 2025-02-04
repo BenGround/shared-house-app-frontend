@@ -56,7 +56,7 @@ function UserView() {
   useEffect(() => {
     axiosInstance
       .get('admin/getUsers', { withCredentials: true })
-      .then((response) => setUsers(response.data))
+      .then((response) => setUsers(response.data.data))
       .catch((error) => handleError(error))
       .finally(() => setIsLoading(false));
   }, []);
@@ -90,17 +90,21 @@ function UserView() {
     if (!confirmed) return;
 
     try {
-      await axiosInstance.delete('admin/user', {
+      const response = await axiosInstance.delete('admin/user', {
         data: {
           roomNumbers,
         },
         withCredentials: true,
       });
 
-      setUsers((users) =>
-        users.filter((user) => !roomNumbers.includes(user.roomNumber))
-      );
-      toast.success(t('user.deleted.success'));
+      if (response.status === 200) {
+        setUsers((users) =>
+          users.filter((user) => !roomNumbers.includes(user.roomNumber))
+        );
+        toast.success(t('user.deleted.success'));
+      } else {
+        throw new Error();
+      }
     } catch (error: any) {
       handleError(error);
     } finally {

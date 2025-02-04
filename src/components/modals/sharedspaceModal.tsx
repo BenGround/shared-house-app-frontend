@@ -188,7 +188,7 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
         }
       );
       toast.success(t('sharedspace.created.success'));
-      if (onSharedspaceCreated) onSharedspaceCreated(response.data);
+      if (onSharedspaceCreated) onSharedspaceCreated(response.data.data);
       onClose();
     } catch (error) {
       handleError(error);
