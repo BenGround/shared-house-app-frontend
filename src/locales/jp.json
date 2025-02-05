@@ -180,5 +180,6 @@
   "booking.rightNow": "今",
   "go.to.bookings": "予約ページへ",
   "not.bookings.yet": "まだ予約はありませんか？",
-  "recovering.bookings": "予約を復元しています"
+  "recovering.bookings": "予約を復元しています",
+  "user.email.not.set": "ユーザーのメールが設定されていません"
 }

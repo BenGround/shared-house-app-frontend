@@ -179,5 +179,6 @@
 	"booking.rightNow": "Now",
 	"go.to.bookings": "Go to bookings page",
 	"not.bookings.yet": "No bookings yet?",
-	"recovering.bookings": "Recovering bookings"
+	"recovering.bookings": "Recovering bookings",
+	"user.email.not.set": "User email is not set"
 }

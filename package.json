@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "homepage": "/",
+  "author": "Benjamin HARTMANN",
   "dependencies": {
     "@benhart44/shared-house-shared": "^1.0.1",
     "@daypilot/daypilot-lite-react": "^3.31.0",

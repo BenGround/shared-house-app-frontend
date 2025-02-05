@@ -101,7 +101,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
       errors.roomNumber = t('validation.roomNumber.required');
     }
 
-    if (validateUsername(currentUser.username)) {
+    if (!validateUsername(currentUser.username)) {
       errors.username = t('profile.username.validationMessage');
     }
 
