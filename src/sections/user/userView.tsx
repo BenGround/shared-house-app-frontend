@@ -17,7 +17,6 @@ import { UserTableRow } from './userTableRow';
 import { CustomTableHead } from '../../utils/table/tableHead';
 import { TableEmptyRows } from '../../utils/table/tableEmptyRows';
 
-import type { UserProps } from './userTableRow';
 import axiosInstance from 'src/settings/axiosInstance';
 import SimpleBar from 'simplebar-react';
 import { useTranslation } from 'react-i18next';
@@ -25,9 +24,10 @@ import { toast } from 'react-toastify';
 import { handleError } from 'src/utils/errorHandler';
 import { CustomTableToolbar } from 'src/utils/table/tableToolbar';
 import { emptyRows, getComparator } from 'src/utils/table/utils';
-import UserEditModal, { UserPropsModal } from 'src/components/modals/userModal';
+import UserEditModal from 'src/components/modals/userModal';
 import LoadingSpinner from 'src/components/loadingSpinner/loadingSpinner';
 import { isTabletWindows } from 'src/utils/utils';
+import { FrontUser } from '@benhart44/shared-house-shared';
 
 const SimpleBarWrapper = styled.div`
   height: 100% !important;
@@ -49,10 +49,10 @@ function UserView() {
   const { t } = useTranslation();
   const isTablet = isTabletWindows();
 
-  const [users, setUsers] = useState<UserProps[]>([]);
+  const [users, setUsers] = useState<FrontUser[]>([]);
   const [filterRoomNumber, setFilterRoomNumber] = useState('');
   const [openModal, setOpenModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<UserProps | null>(null);
+  const [selectedUser, setSelectedUser] = useState<FrontUser | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -63,7 +63,7 @@ function UserView() {
       .finally(() => setIsLoading(false));
   }, []);
 
-  const updateUserFromUsers = (userProps: UserPropsModal) => {
+  const updateUserFromUsers = (userProps: FrontUser) => {
     setUsers((users) =>
       users.map((u) =>
         u.roomNumber === userProps.roomNumber
@@ -79,7 +79,7 @@ function UserView() {
     );
   };
 
-  const addUserInUsers = (userProps: UserProps) => {
+  const addUserInUsers = (userProps: FrontUser) => {
     setUsers((users) => [...users, userProps]);
   };
 
@@ -115,7 +115,7 @@ function UserView() {
   };
 
   type ApplyFilterProps = {
-    inputData: UserProps[];
+    inputData: FrontUser[];
     filterRoomNumber: string;
     comparator: (a: any, b: any) => number;
   };
@@ -156,7 +156,7 @@ function UserView() {
 
   const notFound = !dataFiltered.length && filterRoomNumber;
 
-  const handleOpenModal = (user: UserProps) => {
+  const handleOpenModal = (user: FrontUser) => {
     setSelectedUser(user);
     setOpenModal(true);
   };

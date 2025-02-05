@@ -9,15 +9,15 @@ import {
   Box,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { SharedSpace } from 'src/types/sharedSpace';
 import { AccessTime } from '@mui/icons-material';
 import { DayPilot } from '@daypilot/daypilot-lite-react';
 import BookingSwiper from './bookingSwiper';
+import { FrontSharedSpace } from '@benhart44/shared-house-shared';
 
 type BookingModalProps = {
   open: boolean;
   onClose: () => void;
-  sharedSpace: SharedSpace;
+  sharedSpace: FrontSharedSpace;
   startDate: DayPilot.Date;
   bookingTimeHours: number;
   onCreateBooking: (startDate: Date, hours: number) => void;

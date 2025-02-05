@@ -13,30 +13,28 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { handleError } from 'src/utils/errorHandler';
 import { LoadingButton } from '@mui/lab';
-import { SharedSpace } from 'src/types/sharedSpace';
+import {
+  ApiResponse,
+  FrontSharedSpace,
+  FrontSharedSpaceCreation,
+  isStartDayTimeAfterEndDayTime,
+  validateDescription,
+  validateFormatDayTime,
+  validateMaxBookingHours,
+  validateName,
+  validateNameCode,
+} from '@benhart44/shared-house-shared';
+import { AxiosResponse } from 'axios';
 
 interface SharedSpaceEditModalProps {
   open: boolean;
   onClose: () => void;
-  sharedspace: SharedSpace | null;
+  sharedspace: FrontSharedSpace | null;
   onSharedspaceUpdated: (
-    sharedspaceProps: SharedspacePropsModal,
+    sharedspaceProps: FrontSharedSpace,
     nameCode: string
   ) => void;
-  onSharedspaceCreated?: (sharedspace: SharedSpace) => void;
-}
-
-export interface SharedspacePropsModal {
-  id?: number;
-  nameCode: string;
-  nameEn: string;
-  nameJp: string;
-  descriptionEn: string | null;
-  descriptionJp: string | null;
-  startDayTime: string;
-  endDayTime: string;
-  maxBookingHours: number;
-  maxBookingByUser: number;
+  onSharedspaceCreated?: (sharedspace: FrontSharedSpace) => void;
 }
 
 const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
@@ -49,7 +47,7 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
   const { t } = useTranslation();
 
   const [currentSharespace, setCurrentSharespace] =
-    useState<SharedspacePropsModal>({
+    useState<FrontSharedSpaceCreation>({
       nameCode: '',
       nameEn: '',
       nameJp: '',
@@ -124,78 +122,52 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
       maxBookingByUser?: string;
     } = {};
 
-    const timeRegex = /^(?:[01]?\d|2[0-3]):([0-5]\d)$/;
-    const namesRegex = /^[a-zA-Z0-9\s_\u3040-\u30FF\u4E00-\u9FFF]{3,25}$/;
-    const nameCodeRegex = /^[a-zA-Z0-9_]{3,25}$/;
-
-    const nameCode = currentSharespace.nameCode.trim();
-    if (!nameCodeRegex.test(nameCode)) {
+    if (!validateNameCode(currentSharespace.nameCode.trim())) {
       errors.nameCode = t('errors.sharedspace.name.code.invalid');
     }
 
-    const nameEn = currentSharespace.nameEn.trim();
-    if (!namesRegex.test(nameEn)) {
+    if (!validateName(currentSharespace.nameEn.trim())) {
       errors.nameEn = t('errors.sharedspace.name.invalid');
     }
 
-    const nameJp = currentSharespace.nameJp.trim();
-    if (!namesRegex.test(nameJp)) {
+    if (!validateName(currentSharespace.nameJp.trim())) {
       errors.nameJp = t('errors.sharedspace.name.invalid');
     }
 
-    const descriptionEn = currentSharespace.descriptionEn?.trim();
-    if (
-      descriptionEn &&
-      (descriptionEn.length < 5 || descriptionEn.length > 300)
-    ) {
+    if (!validateDescription(currentSharespace.descriptionEn?.trim())) {
       errors.descriptionEn = t('errors.sharedspace.descrption.invalid');
     }
 
-    const descriptionJp = currentSharespace.descriptionJp?.trim();
-    if (
-      descriptionJp &&
-      (descriptionJp.length < 5 || descriptionJp.length > 300)
-    ) {
+    if (!validateDescription(currentSharespace.descriptionJp?.trim())) {
       errors.descriptionJp = t('errors.sharedspace.descrption.invalid');
     }
 
-    if (
-      currentSharespace.maxBookingHours < 1 ||
-      currentSharespace.maxBookingHours > 24
-    ) {
+    if (!validateMaxBookingHours(currentSharespace.maxBookingHours)) {
       errors.maxBookingHours = t(
         'errors.sharedspace.max.booking.hours.invalid.length'
       );
     }
 
-    if (
-      currentSharespace.maxBookingByUser < 1 ||
-      currentSharespace.maxBookingByUser > 100
-    ) {
+    if (!validateMaxBookingHours(currentSharespace.maxBookingByUser)) {
       errors.maxBookingByUser = t(
         'errors.sharedspace.max.booking.by.user.invalid.length'
       );
     }
 
-    if (!timeRegex.test(currentSharespace.startDayTime)) {
+    if (!validateFormatDayTime(currentSharespace.startDayTime)) {
       errors.startDayTime = t('errors.sharedspace.day.time.invalid');
     }
 
-    if (!timeRegex.test(currentSharespace.endDayTime)) {
+    if (!validateFormatDayTime(currentSharespace.endDayTime)) {
       errors.endDayTime = t('errors.sharedspace.day.time.invalid');
     }
 
-    const [startHour, startMinute] = currentSharespace.startDayTime
-      .split(':')
-      .map(Number);
-    const [endHour, endMinute] = currentSharespace.endDayTime
-      .split(':')
-      .map(Number);
-
-    const startTotalMinutes = startHour * 60 + startMinute;
-    const endTotalMinutes = endHour * 60 + endMinute;
-
-    if (startTotalMinutes >= endTotalMinutes) {
+    if (
+      isStartDayTimeAfterEndDayTime(
+        currentSharespace.startDayTime,
+        currentSharespace.endDayTime
+      )
+    ) {
       errors.startDayTime = t(
         'errors.sharedspace.sharedspace.start.end.day.time.invalid'
       );
@@ -226,7 +198,7 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
 
     setLoading(true);
     try {
-      const response = await axiosInstance.put(
+      const response: AxiosResponse<ApiResponse> = await axiosInstance.put(
         `admin/sharedspace`,
         {
           id: currentSharespace.id,
@@ -239,7 +211,7 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
           endDayTime: currentSharespace.endDayTime,
           maxBookingHours: currentSharespace.maxBookingHours,
           maxBookingByUser: currentSharespace.maxBookingByUser,
-        },
+        } as FrontSharedSpace,
         {
           withCredentials: true,
         }
@@ -247,7 +219,7 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
 
       if (response.status === 204) {
         toast.success(t('sharedspace.updated.success'));
-        onSharedspaceUpdated(currentSharespace, nameCode);
+        onSharedspaceUpdated(currentSharespace as FrontSharedSpace, nameCode);
         onClose();
       } else {
         throw new Error();
@@ -264,27 +236,30 @@ const SharedspaceEditModal: React.FC<SharedSpaceEditModalProps> = ({
 
     setLoading(true);
     try {
-      const response = await axiosInstance.post(
-        `admin/sharedspace`,
-        {
-          nameCode: currentSharespace.nameCode.trim(),
-          nameEn: currentSharespace.nameEn.trim(),
-          nameJp: currentSharespace.nameJp.trim(),
-          descriptionEn: currentSharespace.descriptionEn?.trim(),
-          descriptionJp: currentSharespace.descriptionJp?.trim(),
-          startDayTime: currentSharespace.startDayTime,
-          endDayTime: currentSharespace.endDayTime,
-          maxBookingHours: currentSharespace.maxBookingHours,
-          maxBookingByUser: currentSharespace.maxBookingByUser,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+      const response: AxiosResponse<ApiResponse<FrontSharedSpace>> =
+        await axiosInstance.post(
+          `admin/sharedspace`,
+          {
+            nameCode: currentSharespace.nameCode.trim(),
+            nameEn: currentSharespace.nameEn.trim(),
+            nameJp: currentSharespace.nameJp.trim(),
+            descriptionEn: currentSharespace.descriptionEn?.trim(),
+            descriptionJp: currentSharespace.descriptionJp?.trim(),
+            startDayTime: currentSharespace.startDayTime,
+            endDayTime: currentSharespace.endDayTime,
+            maxBookingHours: currentSharespace.maxBookingHours,
+            maxBookingByUser: currentSharespace.maxBookingByUser,
+          } as FrontSharedSpaceCreation,
+          {
+            withCredentials: true,
+          }
+        );
 
-      if (response.status === 201) {
+      const sharedSpace = response.data?.data;
+
+      if (response.status === 201 && sharedSpace) {
         toast.success(t('sharedspace.created.success'));
-        if (onSharedspaceCreated) onSharedspaceCreated(response.data.data);
+        if (onSharedspaceCreated) onSharedspaceCreated(sharedSpace);
         onClose();
       } else {
         throw new Error();

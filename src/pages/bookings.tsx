@@ -15,14 +15,14 @@ export default function Page() {
   return (
     <>
       <Helmet>
-        <title>{`${t('reservation')} - ${CONFIG.appName}`}</title>
+        <title>{`${t('bookings.sharedspaces')} - ${CONFIG.appName}`}</title>
         <meta
           name="description"
-          content={`${t('reservation')} - ${CONFIG.appName}`}
+          content={`${t('bookings.sharedspaces')} - ${CONFIG.appName}`}
         />
         <meta
           property="og:title"
-          content={`${t('reservation')} - ${CONFIG.appName}`}
+          content={`${t('bookings.sharedspaces')} - ${CONFIG.appName}`}
         />
       </Helmet>
 

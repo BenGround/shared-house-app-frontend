@@ -1,14 +1,15 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axiosInstance from 'src/settings/axiosInstance';
-import { SharedSpace } from 'src/types/sharedSpace';
 import { handleError } from 'src/utils/errorHandler';
 import { useUser } from './userContext';
 import { loadToast } from 'src/utils/imports';
 import { useTranslation } from 'react-i18next';
+import { AxiosResponse } from 'axios';
+import { ApiResponse, FrontSharedSpace } from '@benhart44/shared-house-shared';
 
 interface ShareSpacesContextType {
-  updateSharedSpaces(shareSpaces: SharedSpace[]): void;
-  sharedSpaces: SharedSpace[];
+  updateSharedSpaces(shareSpaces: FrontSharedSpace[]): void;
+  sharedSpaces: FrontSharedSpace[];
   isLoading: boolean;
   error: string | null;
   done: boolean;
@@ -33,12 +34,12 @@ const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const { t } = useTranslation();
   const { isAuthenticated } = useUser();
-  const [sharedSpaces, setSharedSpaces] = useState<SharedSpace[]>([]);
+  const [sharedSpaces, setSharedSpaces] = useState<FrontSharedSpace[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<boolean>(false);
 
-  const updateSharedSpaces = (sharedSpaces: SharedSpace[]) =>
+  const updateSharedSpaces = (sharedSpaces: FrontSharedSpace[]) =>
     setSharedSpaces(sharedSpaces);
 
   const fetchShareSpaces = async () => {
@@ -48,9 +49,12 @@ const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsLoading(true);
 
     try {
-      const response = await axiosInstance.get('sharedspace/list', {
-        withCredentials: true,
-      });
+      const response: AxiosResponse<ApiResponse> = await axiosInstance.get(
+        'sharedspace/list',
+        {
+          withCredentials: true,
+        }
+      );
       setSharedSpaces(response.data?.data);
     } catch (error) {
       setError(handleError(error));
@@ -70,7 +74,7 @@ const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
     formData.append('picture', file);
 
     try {
-      const response = await axiosInstance.put(
+      const response: AxiosResponse<ApiResponse> = await axiosInstance.put(
         `/admin/sharedspace/update/picture/${id}`,
         formData,
         {
@@ -107,7 +111,7 @@ const ShareSpacesProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const removeSharedSpacePicture = async (id: number): Promise<boolean> => {
     try {
-      const response = await axiosInstance.put(
+      const response: AxiosResponse<ApiResponse> = await axiosInstance.put(
         `/admin/sharedspace/delete/picture/${id}`,
         {},
         {

@@ -11,14 +11,14 @@ import MenuItem from '@mui/material/MenuItem';
 
 import { Iconify } from 'src/components/iconify';
 import { useTranslation } from 'react-i18next';
-import { SharedSpace } from 'src/types/sharedSpace';
+import { FrontSharedSpace } from '@benhart44/shared-house-shared';
 
 type SharespaceTableRowProps = {
-  row: SharedSpace;
+  row: FrontSharedSpace;
   selected: boolean;
   minimizeMode: boolean;
   onSelectRow: () => void;
-  onEditRow: (sharedSpace: SharedSpace) => void;
+  onEditRow: (sharedSpace: FrontSharedSpace) => void;
   onDeleteRow: (nameCode: string) => void;
 };
 

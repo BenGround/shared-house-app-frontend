@@ -18,13 +18,11 @@ import {
 } from '@mui/material';
 import { useUser } from 'src/contexts/userContext';
 import { useTranslation } from 'react-i18next';
-import { SharedSpace } from 'src/types/sharedSpace';
-import { getHoursDifference } from 'src/utils/dateUtils';
+import { getHoursDifference } from 'src/utils/dateTimeUtils';
 import { handleError } from 'src/utils/errorHandler';
 import { DayPilot } from '@daypilot/daypilot-lite-react';
 import { toast } from 'react-toastify';
 import axiosInstance from 'src/settings/axiosInstance';
-import { Booking } from 'src/types/booking';
 import LoadingSpinner from 'src/components/loadingSpinner/loadingSpinner';
 import { io, Socket } from 'socket.io-client';
 import { Iconify } from 'src/components/iconify';
@@ -32,6 +30,7 @@ import { validateFile } from 'src/utils/imgUtils';
 import { isMobileWindows } from 'src/utils/utils';
 import { useSharedSpaces } from 'src/contexts/shareSpacesContext';
 import { replaceOrAddBooking, updateTimeDate } from './booking.helper';
+import { FrontBooking, FrontSharedSpace } from '@benhart44/shared-house-shared';
 
 const BookingModal = React.lazy(() => import('./bookingModal'));
 const BookingCreateDialog = React.lazy(() => import('./bookingCreateDialog'));
@@ -42,7 +41,7 @@ const DayPilotCalendar = React.lazy(() =>
 );
 
 type BookingCalendarProps = {
-  sharedSpace: SharedSpace;
+  sharedSpace: FrontSharedSpace;
   isFetching: (fetching: boolean) => void;
 };
 
@@ -61,7 +60,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
   const isEn = i18n.language === 'en';
   const language = isEn ? 'en-US' : 'ja-JP';
 
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<FrontBooking[]>([]);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [bookingTimeHours, setBookingTimeHours] = useState<number>(0);
@@ -87,7 +86,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
   );
 
   const memoizedEvents = useMemo(() => {
-    return bookings.map((booking: Booking) => ({
+    return bookings.map((booking: FrontBooking) => ({
       id: booking.id,
       start: booking.startDate,
       end: booking.endDate,
@@ -445,7 +444,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
 
     const socket = socketRef.current;
 
-    socket.on('newBooking', (newBooking: Booking) => {
+    socket.on('newBooking', (newBooking: FrontBooking) => {
       if (
         newBooking.roomNumber === user?.roomNumber ||
         newBooking.sharedSpaceId !== sharedSpace.id
@@ -458,7 +457,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
       );
     });
 
-    socket.on('updatedBooking', (updatedBooking: Booking) => {
+    socket.on('updatedBooking', (updatedBooking: FrontBooking) => {
       if (
         updatedBooking.roomNumber === user?.roomNumber ||
         updatedBooking.sharedSpaceId !== sharedSpace.id
@@ -471,7 +470,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({
       );
     });
 
-    socket.on('deletedBooking', (deletedBooking: Booking) => {
+    socket.on('deletedBooking', (deletedBooking: FrontBooking) => {
       if (
         deletedBooking.roomNumber === user?.roomNumber ||
         deletedBooking.sharedSpaceId !== sharedSpace.id

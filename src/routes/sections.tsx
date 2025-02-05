@@ -11,12 +11,13 @@ export const HomePage = lazy(() => import('../pages/home'));
 export const BookingsPage = lazy(() => import('../pages/bookings'));
 export const UserPage = lazy(() => import('../pages/user'));
 export const SharedspacePage = lazy(() => import('../pages/sharedspace'));
-export const SignInPage = lazy(() => import('../pages/sign-in'));
-export const Page404 = lazy(() => import('../pages/page-not-found'));
+export const SignInPage = lazy(() => import('../pages/signIn'));
+export const Page404 = lazy(() => import('../pages/pageNotFound'));
 export const BookingCalendar = lazy(
   () => import('../sections/booking/bookingCalendar')
 );
-export const CreatePassword = lazy(() => import('../pages/create-password'));
+export const MyBookings = lazy(() => import('../sections/booking/myBookings'));
+export const CreatePassword = lazy(() => import('../pages/createPassword'));
 export const ProfilePage = lazy(() => import('../pages/profile'));
 
 const renderFallback = <LoadingSpinner translationKey="loading.routes" />;
@@ -51,6 +52,10 @@ function Router() {
         {
           path: 'bookings/:sharedSpaceNameCode',
           element: <ProtectedRoute element={BookingsPage} />,
+        },
+        {
+          path: 'my-bookings',
+          element: <ProtectedRoute element={MyBookings} />,
         },
         {
           path: 'user',

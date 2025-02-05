@@ -16,25 +16,23 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { handleError } from 'src/utils/errorHandler';
 import { LoadingButton } from '@mui/lab';
-import { UserProps } from 'src/sections/user/userTableRow';
-import { validateUsername } from 'src/utils/dataValidation';
+import { AxiosResponse } from 'axios';
+import {
+  ApiResponse,
+  FrontUser,
+  FrontUserCreation,
+  validateEmailFormat,
+  validateEmailLength,
+  validateUsername,
+} from '@benhart44/shared-house-shared';
 
 interface UserEditModalProps {
   open: boolean;
   onClose: () => void;
-  user: UserProps | null;
-  onUserUpdated: (userProps: UserPropsModal) => void;
-  onUserCreated: (userProps: UserProps) => void;
+  user: FrontUser | null;
+  onUserUpdated: (userProps: FrontUser) => void;
+  onUserCreated: (userProps: FrontUser) => void;
 }
-
-export type UserPropsModal = {
-  id?: string;
-  username: string;
-  email: string;
-  roomNumber: number | null;
-  isAdmin: boolean;
-  isActive: boolean;
-};
 
 const UserEditModal: React.FC<UserEditModalProps> = ({
   open,
@@ -45,10 +43,10 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const [currentUser, setCurrentUser] = useState<UserPropsModal>({
+  const [currentUser, setCurrentUser] = useState<FrontUserCreation>({
     username: '',
     email: '',
-    roomNumber: null,
+    roomNumber: 0,
     isAdmin: false,
     isActive: false,
   });
@@ -77,7 +75,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
       setCurrentUser({
         username: '',
         email: '',
-        roomNumber: null,
+        roomNumber: 0,
         isAdmin: false,
         isActive: true,
       });
@@ -93,9 +91,9 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
 
     if (!email) {
       errors.email = t('errors.user.email.required');
-    } else if (email.length < 3 || email.length > 100) {
+    } else if (!validateEmailLength(email)) {
       errors.email = t('errors.user.email.invalid.length');
-    } else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(currentUser.email)) {
+    } else if (!validateEmailFormat(email)) {
       errors.email = t('errors.user.email.invalid');
     }
 
@@ -103,10 +101,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
       errors.roomNumber = t('validation.roomNumber.required');
     }
 
-    if (
-      currentUser.username !== '' &&
-      !validateUsername(currentUser.username)
-    ) {
+    if (validateUsername(currentUser.username)) {
       errors.username = t('profile.username.validationMessage');
     }
 
@@ -130,7 +125,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
 
     setLoading(true);
     try {
-      const response = await axiosInstance.put(
+      const response: AxiosResponse<ApiResponse> = await axiosInstance.put(
         `admin/user`,
         {
           id: currentUser.id,
@@ -138,7 +133,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
           email: currentUser.email.trim(),
           isAdmin: Boolean(currentUser.isAdmin),
           isActive: Boolean(currentUser.isActive),
-        },
+        } as FrontUser,
         {
           withCredentials: true,
         }
@@ -146,7 +141,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
 
       if (response.status === 204) {
         toast.success(t('user.updated.success'));
-        onUserUpdated(currentUser);
+        onUserUpdated(currentUser as FrontUser);
         onClose();
       } else {
         throw new Error();
@@ -163,7 +158,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
 
     setLoading(true);
     try {
-      const response = await axiosInstance.post(
+      const response: AxiosResponse<ApiResponse> = await axiosInstance.post(
         `admin/user`,
         {
           username: currentUser.username.trim(),
@@ -171,7 +166,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
           email: currentUser.email.trim(),
           isAdmin: Boolean(currentUser.isAdmin),
           isActive: Boolean(currentUser.isActive),
-        },
+        } as FrontUser,
         {
           withCredentials: true,
         }

@@ -5,7 +5,12 @@ export const navData = [
     iconName: 'mdi:home',
   },
   {
-    titleCode: 'reservation',
+    titleCode: 'my.bookings',
+    path: '/my-bookings',
+    iconName: 'mdi:calendar-check',
+  },
+  {
+    titleCode: 'bookings.sharedspaces',
     path: '/bookings',
     iconName: 'mdi:calendar',
   },

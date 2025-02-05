@@ -15,7 +15,7 @@ import {
   PasswordRule,
   passwordRules,
   validatePassword,
-} from 'src/utils/dataValidation';
+} from '@benhart44/shared-house-shared';
 
 const LoadingButton = lazy(() => import('@mui/lab/LoadingButton'));
 
@@ -145,7 +145,7 @@ export function CreatePasswordView() {
                 variant="body2"
                 sx={{ fontWeight: validationStatus[index] ? 600 : 400 }}
               >
-                {rule.label}
+                {t(rule.label)}
               </Typography>
             </Box>
           ))}

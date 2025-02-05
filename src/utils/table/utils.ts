@@ -1,5 +1,3 @@
-import { SharedSpace } from 'src/types/sharedSpace';
-
 export function emptyRows(
   page: number,
   rowsPerPage: number,

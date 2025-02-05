@@ -16,23 +16,14 @@ import axiosInstance from 'src/settings/axiosInstance';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { handleError } from 'src/utils/errorHandler';
-
-export type UserProps = {
-  id: string;
-  username: string;
-  roomNumber: number;
-  email: string;
-  isAdmin: boolean;
-  isActive: boolean;
-  profilePicture: string;
-};
+import { FrontUser } from '@benhart44/shared-house-shared';
 
 type UserTableRowProps = {
-  row: UserProps;
+  row: FrontUser;
   selected: boolean;
   minimizeMode: boolean;
   onSelectRow: () => void;
-  onEditRow: (user: UserProps) => void;
+  onEditRow: (user: FrontUser) => void;
   onDeleteRow: (roomNumber: number) => void;
 };
 

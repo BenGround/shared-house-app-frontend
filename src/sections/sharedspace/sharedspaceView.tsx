@@ -17,19 +17,17 @@ import { emptyRows, getComparator } from './../../utils/table/utils';
 
 import axiosInstance from 'src/settings/axiosInstance';
 import SimpleBar from 'simplebar-react';
-import SharedspaceEditModal, {
-  SharedspacePropsModal,
-} from '../../components/modals/sharedspaceModal';
+import SharedspaceEditModal from '../../components/modals/sharedspaceModal';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { handleError } from 'src/utils/errorHandler';
-import { SharedSpace } from 'src/types/sharedSpace';
 import { TableNoData } from 'src/utils/table/tableNoData';
 import { TableEmptyRows } from 'src/utils/table/tableEmptyRows';
 import { CustomTableHead } from 'src/utils/table/tableHead';
 import { CustomTableToolbar } from 'src/utils/table/tableToolbar';
 import { useSharedSpaces } from 'src/contexts/shareSpacesContext';
 import { isTabletWindows } from 'src/utils/utils';
+import { FrontSharedSpace } from '@benhart44/shared-house-shared';
 
 const SimpleBarWrapper = styled.div`
   height: 100% !important;
@@ -53,18 +51,18 @@ function SharedspaceView() {
 
   const { sharedSpaces, updateSharedSpaces } = useSharedSpaces();
   const [tableSharedSpaces, setSharedspaces] =
-    useState<SharedSpace[]>(sharedSpaces);
+    useState<FrontSharedSpace[]>(sharedSpaces);
   const [filterNameCode, setFilterNameCode] = useState('');
   const [openModal, setOpenModal] = useState(false);
   const [selectedSharedspace, setSelectedSharedspace] =
-    useState<SharedSpace | null>(null);
+    useState<FrontSharedSpace | null>(null);
 
   useEffect(() => {
     updateSharedSpaces(tableSharedSpaces);
   }, [tableSharedSpaces]);
 
   const updateSharedspaceFromList = (
-    sharedSpaceProps: SharedspacePropsModal,
+    sharedSpaceProps: FrontSharedSpace,
     nameCode: string
   ) => {
     setSharedspaces((sharedspaces) =>
@@ -87,7 +85,7 @@ function SharedspaceView() {
     );
   };
 
-  const addSharedspaceInList = (sharedSpaceProps: SharedSpace) => {
+  const addSharedspaceInList = (sharedSpaceProps: FrontSharedSpace) => {
     setSharedspaces((sharedspaces) => [...sharedspaces, sharedSpaceProps]);
   };
 
@@ -119,7 +117,7 @@ function SharedspaceView() {
   };
 
   type ApplyFilterProps = {
-    inputData: SharedSpace[];
+    inputData: FrontSharedSpace[];
     filterNameCode: string;
     comparator: (a: any, b: any) => number;
   };
@@ -160,7 +158,7 @@ function SharedspaceView() {
 
   const notFound = !dataFiltered.length && filterNameCode;
 
-  const handleOpenModal = (sharedSpace: SharedSpace) => {
+  const handleOpenModal = (sharedSpace: FrontSharedSpace) => {
     setSelectedSharedspace(sharedSpace);
     setOpenModal(true);
   };

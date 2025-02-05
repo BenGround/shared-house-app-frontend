@@ -4,6 +4,7 @@ import { Box, Button, Typography, IconButton } from '@mui/material';
 import { ArrowLeft, ArrowRight } from '@mui/icons-material';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useTranslation } from 'react-i18next';
+import { formatHour } from 'src/utils/dateTimeUtils';
 
 type BookingModalProps = {
   maxBookingHours: number;
@@ -56,21 +57,6 @@ const BookingSwiper: React.FC<BookingModalProps> = ({
     handleSelect(selectedHour);
   };
 
-  const formatHour = (hoursValue: number) => {
-    const wholeHours = Math.floor(hoursValue);
-    const minutes = (hoursValue - wholeHours) * 60;
-
-    if (wholeHours === 0 && minutes > 0) {
-      return `${minutes} ${t('bookings.mins')}`;
-    }
-    if (minutes === 0) {
-      return `${wholeHours}${t('bookings.hours')}`;
-    }
-    return `${wholeHours}${t('bookings.hours')} ${minutes}${t(
-      'bookings.mins'
-    )}`;
-  };
-
   return (
     <Box
       sx={{
@@ -82,7 +68,6 @@ const BookingSwiper: React.FC<BookingModalProps> = ({
         {t('select.booking.hours')}
       </Typography>
 
-      {/* Wrapper to position Swiper and buttons */}
       <Box
         sx={{
           display: 'flex',
@@ -91,7 +76,6 @@ const BookingSwiper: React.FC<BookingModalProps> = ({
           position: 'relative',
         }}
       >
-        {/* Left Button */}
         <IconButton
           onClick={handlePrev}
           disabled={indexHours < 1}

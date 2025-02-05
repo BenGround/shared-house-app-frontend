@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { LoadingButton } from '@mui/lab';
 import { validateFile } from 'src/utils/imgUtils';
-import { validateUsername } from 'src/utils/dataValidation';
+import { validateUsername } from '@benhart44/shared-house-shared';
 
 const Profile: React.FC = () => {
   return <ProfileView />;

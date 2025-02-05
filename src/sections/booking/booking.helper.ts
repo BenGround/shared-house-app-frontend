@@ -1,8 +1,8 @@
-import { Booking } from 'src/types/booking';
+import { FrontBooking } from '@benhart44/shared-house-shared';
 
 export const replaceOrAddBooking = (
-  prevBookings: Booking[],
-  processedBooking: Booking
+  prevBookings: FrontBooking[],
+  processedBooking: FrontBooking
 ) => {
   const updatedBookings = prevBookings.map((booking) =>
     booking.id === processedBooking.id ? processedBooking : booking
