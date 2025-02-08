@@ -6,7 +6,7 @@
   "homepage": "/",
   "author": "Benjamin HARTMANN",
   "dependencies": {
-    "@benhart44/shared-house-shared": "^1.0.1",
+    "@benhart44/shared-house-shared": "^1.0.2",
     "@daypilot/daypilot-lite-react": "^3.31.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
