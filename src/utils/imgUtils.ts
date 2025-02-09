@@ -1,6 +1,6 @@
 import i18n from 'i18next';
 
-export const OAKHOUSE_LOGO = 'https://www.oakhouse.jp/assets/img/logo.png';
+export const NAV_LOGO = 'https://i.imgur.com/j7YMG5P.png';
 export const JAPAN_FLAG =
   'https://upload.wikimedia.org/wikipedia/commons/9/9e/Flag_of_Japan.svg';
 export const ENGLISH_FLAG =

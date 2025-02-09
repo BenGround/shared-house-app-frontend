@@ -15,7 +15,7 @@ import { Scrollbar } from '../../components/scrollbar';
 import { useTranslation } from 'react-i18next';
 import { Divider, Typography } from '@mui/material';
 import { useUser } from 'src/contexts/userContext';
-import { OAKHOUSE_LOGO } from 'src/utils/imgUtils';
+import { NAV_LOGO } from 'src/utils/imgUtils';
 import { Iconify } from 'src/components/iconify';
 
 export type NavContentProps = {
@@ -122,7 +122,7 @@ export function NavContent({ data, onNavItemClick }: NavContentProps) {
             sx={{ paddingInlineStart: 0 }}
           >
             <img
-              src={OAKHOUSE_LOGO}
+              src={NAV_LOGO}
               alt="logo"
               style={{
                 width: 200,

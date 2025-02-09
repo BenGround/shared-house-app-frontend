@@ -8,7 +8,7 @@ import { useSharedSpaces } from '../contexts/shareSpacesContext';
 import {
   ENGLISH_FLAG,
   JAPAN_FLAG,
-  OAKHOUSE_LOGO,
+  NAV_LOGO,
   DASHBOARD_IMG,
 } from 'src/utils/imgUtils';
 
@@ -22,7 +22,7 @@ const PreloadImagesMiddleware: React.FC<{ children: React.ReactNode }> = ({
       .filter((share) => Boolean(share.picture))
       .map((share) => ({ src: share.picture as string, type: TypeBackground })),
     { src: DASHBOARD_IMG, type: TypeBackground },
-    { src: OAKHOUSE_LOGO, type: TypeImage },
+    { src: NAV_LOGO, type: TypeImage },
     {
       src: JAPAN_FLAG,
       type: TypeImage,
